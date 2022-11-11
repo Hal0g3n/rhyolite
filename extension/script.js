@@ -210,15 +210,22 @@ try {
   console.error(e);
 }
 
-
 const exampleChecklist = [{title: "Sevastopol", checked: true},{title: "Krakow", checked: true}];
 
-async function setTask(task) {
+async function setTask(task, val) {
+  if (currentWorkspace == "") return;
   let workspace = await getFromLocalStorage(currentWorkspace);
+
+  workspace.tasks[task] = val;
+  setToLocalStorage({[`${currentWorkspace}`]: workspace})
 }
 
 async function removeTask(task) {
+  if (currentWorkspace == "") return;
+  let workspace = await getFromLocalStorage(currentWorkspace);
 
+  delete workspace.tasks[task];
+  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
 }
 
 const workspaceBox = document.getElementById("yaw");
