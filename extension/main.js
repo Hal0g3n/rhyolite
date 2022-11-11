@@ -12,10 +12,19 @@ async function closeOtherTabs() {
     );
 }
 
+function openTab(url) {
+    chrome.tabs.create({
+        active: false,
+        url: url
+    });
+}
+
 function main() {
-    const button = document.getElementById("button");
-    button.addEventListener("click", function(event) {
-        chrome.tabs.create({ url: url });
+    // do amogus
+    const amogus = document.getElementById("amogus");
+    amogus.addEventListener("click", function(event) {
+        closeOtherTabs();
+        openTab("https://amogus.surge.sh");
     })
 }
 

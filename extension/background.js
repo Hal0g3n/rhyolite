@@ -18,3 +18,12 @@ chrome.commands.onCommand.addListener(function (command) {
 chrome.windows.onCreated.addListener(function() {
     chrome.tabs.create({url: "./index.html" });
 });
+
+chrome.contextMenus.removeAll();
+chrome.contextMenus.create({
+      title: "first",
+      contexts: ["browser_action"],
+      onclick: function() {
+        alert('first');
+      }
+});
