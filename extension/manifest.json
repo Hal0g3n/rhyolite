@@ -24,11 +24,6 @@
      "128": "/images/icon.png"
    },
    "options_page": "options.html",
-   "web_accessible_resources": [{ 
-     "resources": ["content.css"],
-     "matches": ["<all_urls>"]
-   }],
-   
    "commands": {
       "Jump to Home": {
          "suggested_key": {
