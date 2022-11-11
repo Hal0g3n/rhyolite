@@ -79,8 +79,11 @@ async function createWorkspace(name) {
   }
   if (!workspaces.includes(name)) return;
   
+  chrome.tabs.query({}, (tabs) => {
+    tabs.map((tab) => {})
+  })
   setToLocalStorage({[`${name}`]: {
-      active_links: [],
+      active_links: (await chrome.tabs.query({})).map(tab => ({id: tab.id, name: tab.title, url: tab.url})),
       stored_tabs: {}
   }});
   
