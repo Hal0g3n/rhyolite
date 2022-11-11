@@ -133,7 +133,7 @@ async function deleteWorkspace(name) {
 
 /** <Links Page> **/
 let active_links = ((await chrome.tabs.query({})).map(
-  e => ({ id: e.id, name: e.title, url: e.url })
+  e => ({ id: e.id, name: e.title, url: e.url, /*icon: e.favIconUrl*/ })
 ));
 active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
 
@@ -182,16 +182,17 @@ async function onTabMoved(tabId, info) {
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
-async function onTabUpdated(tabId, tab, info) {
+async function onTabUpdated(tabId, info, tab) {
+  if (tab == undefined) return;
   if (tab.url.includes("chrome-extension://")) return;
   if (tab.url.includes(chrome.runtime.id)) return;
-  if (tab == undefined) return;
 
-  for (let tab of active_links) {
-    if (tab.id != tabId) continue;
+  for (let t of active_links) {
+    if (t.id != tabId) continue;
 
-    tab.name = info.title;
-    tab.url = info.url;
+    t.name = tab.title;
+    t.url = tab.url;
+    // t.icon = tab.favIconUrl;
   }
   
   // Update workspace if applicable
