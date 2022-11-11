@@ -217,7 +217,7 @@ try {
 }
 
 /** <Tasks Page> **/
-const checkList = [];
+let checkList = [];
 async function newTask(event) {
   if (event.key != "Enter") return;
   
