@@ -74,6 +74,11 @@ function deleteFromLocalStorage(key) {
 let currentWorkspace = null;
 let workspaces = null;
 
+let active_links = ((await chrome.tabs.query({})).map(
+  e => ({ id: e.id, name: e.title, url: e.url, /*icon: e.favIconUrl*/ })
+));
+active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
+
 async function createWorkspace(name) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
@@ -141,13 +146,6 @@ async function deleteWorkspace(name) {
   if (workspaces.length <= 0) currentWorkspace = null;
   else await switchWorkspace(workspaces[0]);
 }
-
-
-/** <Links Page> **/
-let active_links = ((await chrome.tabs.query({})).map(
-  e => ({ id: e.id, name: e.title, url: e.url, /*icon: e.favIconUrl*/ })
-));
-active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
 
 async function onTabCreated(tab) {
   if (tab == null || tab.url == null) return;
@@ -243,8 +241,8 @@ async function newTask(task) {
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
   
-  workspace.tasks = checkList
-  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  workspace.tasks = checkList;
+  setToLocalStorage({ [`${currentWorkspace}`]: workspace });
   console.log(workspace)
 }
 
@@ -314,8 +312,12 @@ async function generate_tabs() {
     const tab_pane_img = document.createElement("img");
     const tab_div = document.createElement("div");
     tab_pane_img.classList.add("tabPaneImg");
-    const { origin } = new URL(link.url);
-    tab_pane_img.src = `${origin}/favicon.ico`;
+    try {
+      const { origin } = new URL(link.url);
+      tab_pane_img.src = `${origin}/favicon.ico`;
+    } catch (e) {
+      tab_pane_img.src = `assets/chrome.png`;
+    }
     tab_pane_img.addEventListener("error", function(event) {
       tab_pane_img.src = "assets/chrome.png";
     });
@@ -382,31 +384,32 @@ function do_checklist() {
     tabDiv.innerHTML = `
       <input type="checkbox" class="_checkbox" name="c${i}" checked="${checkList[task]}" onclick="setTask(${task}, this)"/>
       <label class="checklist1Label" for="c${i}">${task}</label><br>
-    `; 
+    `;
 
     tasksp.appendChild(tabDiv);
-  }
+  });
   
-  notesp.innerHTML = `<div id="mdArea"></div>
-  <div id="mdEditor"></div>
-  `
+  notesp.innerHTML = `
+    <div id="mdArea"></div>
+    <div id="mdEditor"></div>
+  `;
 
   const addTaskDiv = document.createElement("div");
   addTaskDiv.innerHTML = `
-      <img src="./assets/plus-symbol-button.png" class="iconDetails" style="width: 16px; height: auto; margin: 16px 0;">
-    `;
+    <img src="./assets/plus-symbol-button.png" class="iconDetails" style="width: 16px; height: auto; margin: 16px 0;">
+  `;
 
   const inp = document.createElement("input");
   inp.className = "addTask";
   inp.addEventListener("keyup", event => {
-    if (event.key !== "Enter") return;
+    if (event.code !== "Enter") return;
     newTask(inp.value);
-    console.log(event)
+    console.log(inp.value);
     event.preventDefault();
   });
   
   addTaskDiv.appendChild(inp);
-  tasksp.append(addTaskDiv)
+  tasksp.append(addTaskDiv);
 
   const t = document.getElementsByClassName("");
   for (let i = 0; i < t.length; i++){
@@ -447,7 +450,7 @@ function do_addnew() {
     valid = /^[a-zA-Z0-9_]+$/.test(addnewtext.value);
   });
   addnewtext.addEventListener("keydown", function(event) {
-    if (event.code === "enter") {
+    if (event.code === "Enter") {
       create();
     }
   });
@@ -467,6 +470,7 @@ function do_storagelistener() {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "workspaces") {
         generate_workspaces();
+        console.log("WORKSPACES");
       } else if (key === currentWorkspace) {
         generate_tabs();
         do_checklist();
@@ -494,4 +498,4 @@ async function removeAllWorkspaces() {
   workspaces.forEach(w => deleteWorkspace(w));
 }
 
-removeAllWorkspaces();
+// removeAllWorkspaces();
