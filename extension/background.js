@@ -1,16 +1,8 @@
-function closeOtherTabs() {
-    chrome.tabs.query({ 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT }, function (otherTabs) {
-        var otherTabIds = []; for (tab of otherTabs) { otherTabIds.push(tab.id); }
-        chrome.tabs.remove(otherTabIds); window.close();
-    });
-}
-
-function openTab() {
-    chrome.tabs.create({url: 'index.html'});
-}
-
 function jumpToHome() {
-    chrome.tab.highlight()
+    chrome.tabs.query({ currentWindow: true, index: 0 }, (tab) => {
+        console.log(tab);
+        chrome.tab.highlight(tab);
+    });
 }
 
 chrome.commands.onCommand.addListener(function (command) {
