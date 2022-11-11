@@ -30,7 +30,7 @@ exampleT.forEach((ob)=>{
     tabDiv.className = "tabOpenTab"
     tabDiv.innerHTML = `<img class="tabPaneImg" src="${ob.favicon}">
     <p class="tabTitle">${ob.title}</p>
-    <p>${ob.link}</p>
+    <p class=tabLink>${ob.link}</p>
     `
     tabsp.appendChild(tabDiv);
 })
