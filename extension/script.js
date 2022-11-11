@@ -51,7 +51,7 @@ class Workspace {
   }
 };
 
-export function getFromLocalStorage(key) {
+function getFromLocalStorage(key) {
   return new Promise(resolve => {
       chrome.storage.sync.get(key, function (item) {
           resolve(item[key]);
@@ -59,7 +59,7 @@ export function getFromLocalStorage(key) {
   });
 }
 
-export function setToLocalStorage(values) {
+function setToLocalStorage(values) {
   return new Promise(resolve => {
       chrome.storage.sync.set(values, function () {
           if (chrome.runtime.lastError)
@@ -72,7 +72,7 @@ export function setToLocalStorage(values) {
 let currentWorkspace = "";
 let workspaces = null;
 
-export async function createWorkspace(name) {
+async function createWorkspace(name) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
     workspaces = [];
@@ -90,7 +90,7 @@ export async function createWorkspace(name) {
   switchWorkspace(name);
 }
 
-export async function switchWorkspace(next) {
+async function switchWorkspace(next) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
     console.error("WOW, THIS SHOULD HAPPEN!!!");
@@ -116,7 +116,7 @@ export async function switchWorkspace(next) {
   currentWorkspace = next;
 }
 
-export async function deleteWorkspace(name) {
+async function deleteWorkspace(name) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
     workspaces = [];
@@ -137,7 +137,7 @@ export async function deleteWorkspace(name) {
 }
 
 
-export async function onTabCreated(tab) {
+async function onTabCreated(tab) {
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
   workspace.active_links.push({
@@ -149,7 +149,7 @@ export async function onTabCreated(tab) {
   setToLocalStorage(currentWorkspace, workspace);
 }
 
-export async function onTabRemoved(tabId, info) {
+async function onTabRemoved(tabId, info) {
   let workspace = (await getFromLocalStorage(currentWorkspace));
   if (workspace == null) return;
   workspace = workspace.filter(e => 
@@ -159,7 +159,7 @@ export async function onTabRemoved(tabId, info) {
   setToLocalStorage(currentWorkspace, workspace);
 }
 
-export async function onTabMoved(tabId, info) {
+async function onTabMoved(tabId, info) {
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
   let moved = workspace.active_links[info.fromIndex];
@@ -170,7 +170,7 @@ export async function onTabMoved(tabId, info) {
   setToLocalStorage(currentWorkspace, workspace);
 }
 
-export async function onTabUpdated(tabId, info) {
+async function onTabUpdated(tabId, info) {
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
   for (let tab of workspace.active_tabs) {
@@ -181,6 +181,7 @@ export async function onTabUpdated(tabId, info) {
   }
 }
 
+// add listeners (isn't it obvious?)
 chrome.tabs.onMoved.addListener(onTabMoved);
 chrome.tabs.onRemoved.addListener(onTabRemoved);
 chrome.tabs.onDetached.addListener(onTabRemoved);
