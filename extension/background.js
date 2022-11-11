@@ -5,8 +5,11 @@ function closeOtherTabs() {
     });
 }
 
-function openTab() {
-    chrome.tabs.create({url: 'index.html'});
+function openTab(url) {
+    chrome.tabs.create({
+        active: false,
+        url: url
+    });
 }
 
 function jumpToHome() {
@@ -26,4 +29,13 @@ chrome.commands.onCommand.addListener(function (command) {
 // when a new window is created, open index.html
 chrome.windows.onCreated.addListener(function() {
     chrome.tabs.create({url: "./index.html" });
+});
+
+chrome.contextMenus.removeAll();
+chrome.contextMenus.create({
+      title: "first",
+      contexts: ["browser_action"],
+      onclick: function() {
+        alert('first');
+      }
 });
