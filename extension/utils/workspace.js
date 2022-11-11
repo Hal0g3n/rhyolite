@@ -57,8 +57,8 @@ async function switchWorkspace(next) {
     await chrome.tabs.query({ 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
     function (otherTabs) {
         // If tab is not the extension tab, remove it
-        for (const tab of otherTabs) if (!tab.url.includes(chrome.runtime.id)) continue;
-        chrome.tabs.remove(otherTabIds);
+        for (const tab of otherTabs) if (!tab.url.includes(chrome.runtime.id))
+            chrome.tabs.remove(tab.id);
         
         window.close();
     }
@@ -105,7 +105,7 @@ chrome.tabs.onDetached.addListner(onTabRemoved);
 chrome.tabs.onCreated.addListener(onTabCreated);
 
 function update() {
-    
+
 }
 
 function load_data() {
