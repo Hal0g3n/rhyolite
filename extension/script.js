@@ -8,47 +8,51 @@ function jumpToHome() {
 function closeOtherTabs() {
   var home = chrome.tabs.query({ currentWindow: true, index: 0 });
   chrome.tabs.query(
-      { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
-      function (otherTabs) {
-          for (const tab of otherTabs) if (home.id != tab.id)
-              chrome.tabs.remove(otherTabIds);
+    { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
+    function (otherTabs) {
+      for (const tab of otherTabs)
+        if (home.id != tab.id)
+          chrome.tabs.remove(otherTabIds);
 
-          window.close();
-      }
+      window.close();
+    }
   );
 }
 
 // Opens the stored away tabs in the workspace
 function openSavedTabs(urls) {
   urls.forEach((url) => 
-      chrome.tabs.create({
-          active: false,
-          url: url
-      })
+    chrome.tabs.create({
+      active: false,
+      url: url
+    })
   );
 }
 
 // Creates the Home Tab (pinned) in the given window
 function createPinnedTab(id) {
   chrome.tabs.create({ url: "./index.html", windowId: id, active: false, pinned: true }, (tab) => {
-      chrome.tabs.move(tab.id, { index: 0 });
-  })
+    chrome.tabs.move(tab.id, { index: 0 });
+  });
 }
 
 /** <Storage Functionz> **/
 
 function getFromLocalStorage(key) {
   return new Promise(resolve => {
-      chrome.storage.sync.get(key, function (item) {
-          resolve(item[key]);
-      });
+    chrome.storage.local.get(key, function(item) {
+      resolve(item[key]);
+    });
   });
 }
 
-function setToLocalStorage(values) {
-  chrome.storage.sync.set(values, function () {
-    if (chrome.runtime.lastError)
-      alert(`Error saving to browser storage:\n${chrome.runtime.lastError.message}`);
+function setToLocalStorage(values, callback) {
+  return new Promise(resolve => {
+    chrome.storage.local.set(values, function () {
+      if (chrome.runtime.lastError)
+        alert(`Error saving to browser storage:\n${chrome.runtime.lastError.message}`);
+      resolve();
+    });
   });
 }
 
@@ -57,29 +61,32 @@ let workspaces = null;
 let active_links = ((await chrome.tabs.query({})).map(
   e => ({id: e.id, name: e.title, url: e.url})
 ));
-active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id))
+active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
 
 async function createWorkspace(name) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
     workspaces = [];
   } else {
-    if (!workspaces.includes(name)) return;
+    if (workspaces.includes(name)) return;
   }
-  if (workspaces.includes(name)) return;
-
-  setToLocalStorage({[`${name}`]: {
+  
+  await setToLocalStorage({
+    [name]: {
       active_links: active_links,
       stored_tabs: {}
-  }});
+    }
+  });
 
   // add to array and update storage
   workspaces.push(name);
-  setToLocalStorage({ workspaces: workspaces });
+  await setToLocalStorage({ workspaces: workspaces });
   switchWorkspace(name);
+
 }
 
 async function switchWorkspace(next) {
+  console.log("switch");
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
     console.error("WOW, THIS SHOULD HAPPEN!!!");
@@ -89,23 +96,33 @@ async function switchWorkspace(next) {
   
   // Remove all unrelated tabs
   await chrome.tabs.query(
-      { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
-      function (otherTabs) {
-          // If tab is not the extension tab, remove it
-          for (const tab of otherTabs)
-              if (!tab.url.includes(chrome.runtime.id))
-                  chrome.tabs.remove(tab.id);
-          
-          window.close();
-      }
+    { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
+    function (otherTabs) {
+      // If tab is not the extension tab, remove it
+      for (const tab of otherTabs)
+        if (!tab.url.includes(chrome.runtime.id))
+          chrome.tabs.remove(tab.id);
+      
+      window.close();
+    }
   );
+  alert(2);
 
-  // Set active_linksto open
-  active_links = (await getFromLocalStorage(next)).active_links;
-  
-  // Get active links to open
-  openSavedTabs(active_links);
-  currentWorkspace = next;
+  // Set active links to open
+  alert(next);
+  // const a = (await getFromLocalStorage(next));
+  chrome.storage.local.get([next], function(result) {
+    const a = result[next];
+    alert(JSON.stringify(a));
+    active_links = a.active_links;
+    alert(3);
+    
+    // Get active links to open
+    openSavedTabs(active_links);
+    alert(4);
+    currentWorkspace = next;
+    alert(5);
+  });
 }
 
 async function deleteWorkspace(name) {
@@ -117,8 +134,8 @@ async function deleteWorkspace(name) {
 
   // remove from array and update storage
   workspaces = workspaces.filter(e => e != name);
-  setToLocalStorage({ workspaces: workspaces });
-  chrome.storage.sync.remove(name);
+  await setToLocalStorage({ workspaces: workspaces });
+  chrome.storage.local.remove(name);
 
   // Switch out if necessary
   if (currentWorkspace != name) return;
@@ -142,7 +159,7 @@ async function onTabCreated(tab) {
   if (workspace == null) return;
 
   workspace.active_links = active_links
-  setToLocalStorage(currentWorkspace, workspace);
+  await setToLocalStorage(currentWorkspace, workspace);
 }
 
 async function onTabRemoved(tabId, info) {
@@ -153,7 +170,7 @@ async function onTabRemoved(tabId, info) {
   if (workspace == null) return;
 
   workspace.active_links = active_links
-  setToLocalStorage(currentWorkspace, workspace);
+  await setToLocalStorage(currentWorkspace, workspace);
 }
 
 async function onTabMoved(tabId, info) {
@@ -166,7 +183,7 @@ async function onTabMoved(tabId, info) {
   if (workspace == null) return;
 
   workspace.active_links = active_links
-  setToLocalStorage(currentWorkspace, workspace);;
+  await setToLocalStorage(currentWorkspace, workspace);;
 }
 
 async function onTabUpdated(tabId, tab, info) {
@@ -184,7 +201,7 @@ async function onTabUpdated(tabId, tab, info) {
   if (workspace == null) return;
 
   workspace.active_links = active_links
-  setToLocalStorage(currentWorkspace, workspace);
+  await setToLocalStorage(currentWorkspace, workspace);
 }
 
 try {
@@ -196,10 +213,8 @@ try {
   chrome.tabs.onCreated.addListener(onTabCreated);
   chrome.tabs.onUpdated.addListener(onTabUpdated);
 
-chrome.storage.onChanged.addListener(console.log);
-
   // testing...
-  console.log(await getFromLocalStorage("workspaces"));
+  console.log(await getFromLocalStorage("different"));
 
 } catch (e) {
   // wow! error is totally caught here.
@@ -338,9 +353,9 @@ function do_addnew() {
   addnewtext.addEventListener("input", function(event) {
     valid = /^[a-zA-Z0-9_]+$/.test(addnewtext.value);
   });
-  addnewtext.addEventListener("keydown", async function(event) {
+  addnewtext.addEventListener("keydown", function(event) {
     if (event.code === "Enter") {
-      await create();
+      create();
     }
   });
 }
@@ -348,19 +363,18 @@ do_addnew();
 
 function do_storagelistener() {
 
+  /*
   chrome.storage.onChanged.addListener(function(changes, namespace) {
     // if (namespace !== "sync") return;
-    for (let [key, { old, value }] of Object.entries(changes)) {
-      console.log(
-        `Storage key "${key}" in namespace "${namespace}" changed.`,
-        `Old value was "${oldValue}", new value is "${newValue}".`
-      );
+    alert(`${JSON.stringify(changes)}, ${namespace}`);
+    for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "workspaces") {
-        generate_workspaces(value);
+        //generate_workspaces(value);
         console.log("WORKSPACES");
       }
     }
   });
+  */
 
 }
 do_storagelistener();
