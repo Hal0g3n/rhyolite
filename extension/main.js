@@ -1,26 +1,21 @@
 async function closeOtherTabs() {
-    let [cur] = await chrome.tabs.query(queryOptions);
-    console.log(cur)
+
+    var home = chrome.tabs.query({ currentWindow: true, index: 0 });
     chrome.tabs.query(
         { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
         function (otherTabs) {
-            const otherTabIds = [];
-            for (const tab of otherTabs) if (cur.id != tab.id) otherTabIds.push(tab.id);
-            chrome.tabs.remove(otherTabIds);
+            for (const tab of otherTabs) if (home.id != tab.id)
+                chrome.tabs.remove(otherTabIds);
+
             window.close();
         }
     );
 }
 
-function openTab(url) {
-    chrome.tabs.create({ url: url });
-}
-
 function main() {
     const button = document.getElementById("button");
     button.addEventListener("click", function(event) {
-        // closeOtherTabs();
-        openTab("https://amogus.surge.sh");
+        chrome.tabs.create({ url: url });
     })
 }
 

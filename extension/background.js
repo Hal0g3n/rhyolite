@@ -1,7 +1,6 @@
 function jumpToHome() {
     chrome.tabs.query({ currentWindow: true, index: 0 }, (tab) => {
-        console.log(tab);
-        chrome.tab.highlight(tab);
+        chrome.tabs.update(tab[0].id, { active: true });
     });
 }
 
