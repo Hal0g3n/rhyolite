@@ -9,25 +9,12 @@ chrome.commands.onCommand.addListener(function (command) {
     }
 });
 
-// Shortcut function for jumping to first page
-function jumpToHome() {
-    chrome.tabs.query({ currentWindow: true, index: 0 }, (tab) => {
-        chrome.tabs.update(tab[0].id, { active: true });
-    });
-}
-
-// Creates the Home Tab (pinned) in the given window
-function createTab(id) {
-    chrome.tabs.create({ url: "./index.html", windowId: id, active: false, pinned: true }, (tab) => {
-        chrome.tabs.move(tab.id, { index: 0 });
-    })
-}
-
 
 // when a new window is created, create tab to go with it
 chrome.windows.onCreated.addListener((window) => {
-    createTab(window.id)
+    createPinnedTab(window.id)
 });
+
 
 // Create tab for all windows
 chrome.windows.getAll((windows) => {
@@ -44,15 +31,6 @@ chrome.windows.getAll((windows) => {
         })
 
         // Create the tab to go with it
-        createTab(window.id)
+        createPinnedTab(window.id)
     }
 });
-
-// chrome.contextMenus.removeAll();
-// chrome.contextMenus.create({
-//       title: "first",
-//       contexts: ["browser_action"],
-//       onclick: function() {
-//         alert('first');
-//       }
-// });
