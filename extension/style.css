@@ -167,3 +167,7 @@ body {
   margin-top: 0px;
   padding: none;
 }
+.checklist1Label{
+  font-size: 16px;
+  color: var(--t1)
+}

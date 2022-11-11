@@ -11,6 +11,7 @@ try {
 const exampleWorkspaces = [{
   name: "Sus domesticus"
 }];
+const exampleChecklist = [{title: "Sevastopol", checked: true},{title: "Krakow", checked: true}];
 
 const exampleTabs = [
   {
@@ -24,7 +25,7 @@ const exampleTabs = [
 
 const tabsp = document.getElementById("tabsp");
 const workspaceBox = document.getElementById("yaw");
-
+const tasksp = document.getElementById("tasksp");
 // replace exampleW
 exampleWorkspaces.forEach((workspace) => {
   const workspace_item = document.createElement("a");
@@ -65,3 +66,22 @@ document.querySelectorAll(".tablinks").forEach((tab) => {
     openTab(event, tab.getAttribute("open_id"));
   });
 });
+
+for (let i = 0; i < exampleChecklist.length; i++) {
+  const tabDiv = document.createElement("div");
+  tabDiv.innerHTML = `
+  <input type="checkbox" class="checkbox1" name="c${i}" checked="${exampleChecklist[i].checked}">
+  <label class="checklist1Label" for="c${i}">${exampleChecklist[i].title}</label><br>
+  `;
+  tasksp.appendChild(tabDiv);
+}
+const t = document.getElementsByClassName("");
+for (let i = 0; i < t.length; i++){
+  t[i].addEventListener('change', function() {
+    if (this.checked) {
+      //do stuff I am retarded
+    } else {
+      
+    }
+  })
+}
