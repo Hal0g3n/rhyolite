@@ -176,7 +176,7 @@ async function onTabMoved(tabId, info) {
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
-async function onTabUpdated(tabId, tab, info) {
+async function onTabUpdated(tabId, info, tab) {
   if (tab.url.includes("chrome-extension://")) return;
   if (tab.url.includes(chrome.runtime.id)) return;
   if (tab == undefined) return;
