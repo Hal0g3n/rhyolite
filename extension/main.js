@@ -1,9 +1,11 @@
-function closeOtherTabs() {
+async function closeOtherTabs() {
+    let [cur] = await chrome.tabs.query(queryOptions);
+    console.log(cur)
     chrome.tabs.query(
         { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
         function (otherTabs) {
             const otherTabIds = [];
-            for (const tab of otherTabs) otherTabIds.push(tab.id);
+            for (const tab of otherTabs) if (cur.id != tab.id) otherTabIds.push(tab.id);
             chrome.tabs.remove(otherTabIds);
             window.close();
         }
