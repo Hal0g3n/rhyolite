@@ -1,8 +1,10 @@
 // importScripts("./utils/util.js", "./utils/workspace.js");
 
-chrome.storage.sync.get("data", function (item) {
-  console.log(item);
-});
+if (chrome && chrome.storage) {
+  chrome.storage.sync.get("data", function (item) {
+    console.log(item);
+  });
+}
 
 const exampleW = [{
   name: "Sus domesticus"
