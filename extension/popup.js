@@ -1,9 +1,28 @@
 
 
 let data = null;
+let workspaces = [];
+
+function getFromLocalStorage(key) {
+  return new Promise(resolve => {
+    chrome.storage.sync.get(key, function(item) {
+      resolve(item[key]);
+    });
+  });
+}
+
+function setToLocalStorage(value) {
+  return new Promise(resolve => {
+    chrome.storage.sync.set({ key: value }, function() {
+      if (chrome.runtime.lastError)
+        alert(`Error saving to browser storage:\n${chrome.runtime.lastError.message}`);
+      resolve();
+    });
+  });
+}
 
 function update() {
-
+  
 }
 
 function load_data() {
