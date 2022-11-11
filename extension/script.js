@@ -263,16 +263,26 @@ async function generate_tabs() {
 
   links.forEach((link) => {
     const tab_container = document.createElement("div");
-    tab_container.className = "tabContainer";
+    const tab_pane_img = document.createElement("img");
+    const tab_div = document.createElement("div");
+    tab_pane_img.classList.add("tabPaneImg");
     const { origin } = new URL(link.url);
-    tab_container.innerHTML = `
-      <img class="tabPaneImg" src="${origin}/favicon.ico">
-      <div class="tabDiv">
+    tab_pane_img.src = `${origin}/favicon.ico`;
+    tab_pane_img.addEventListener("error", function(event) {
+      tab_pane_img.src = "assets/chrome.png";
+    });
+    tab_container.appendChild(tab_pane_img);
+    tab_div.classList.add("tabDiv");
+    tab_div.innerHTML = `
       <p class="tabTitle">${link.name}</p>
       <p class="tabLink">${link.url}</p>
-      </div>
     `;
-    // onerror="this.onerror=null;this.src='assets/chrome.png';"
+    tab_container.appendChild(tab_div);
+    tab_container.className = "tabContainer";
+    tab_container.style.cursor = "pointer";
+    tab_container.addEventListener("click", function(event) {
+      chrome.tabs.update(link.id, {selected: true});
+    });
     tabsp.appendChild(tab_container);
   });
 
