@@ -110,18 +110,20 @@ async function switchWorkspace(next) {
   }
   if (!workspaces.includes(next)) return;
   
-  // Remove all unrelated tabs
+  // remove all unrelated tabs
   await closeOtherTabs();
 
-  // Set active links to open
+  // get the next workspace
   const a = (await getFromLocalStorage(next));
-  active_links = a.active_links;
 
-  // Set checklist
+  // set active links
+  active_links = a.active_links;
+  // set the checklist
   checkList = a.tasks;
   
-  // Get active links to open
+  // get active links to open
   openSavedTabs(active_links);
+  do_checklist();
   currentWorkspace = next;
 }
 
@@ -138,6 +140,7 @@ async function deleteWorkspace(name) {
   await deleteFromLocalStorage(name);
 
   active_links = [];
+  checkList = [];
 
   // Switch out if necessary
   if (currentWorkspace != name) return;
@@ -237,35 +240,35 @@ let checkList = {};
 async function newTask(task) {
   checkList[task] = false;
   
-  // Update Workspace as necessary
+  // Update workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
   
   workspace.tasks = checkList;
-  setToLocalStorage({ [`${currentWorkspace}`]: workspace });
-  console.log(workspace)
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  console.log(currentWorkspace, workspace);
 }
 
 async function setTask(task, checked) {
   checkList[task] = checked;
 
-  // Update Workspace as necessary
+  // Update workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
 
-  workspace.tasks = checkList
-  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  workspace.tasks = checkList;
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
 async function removeTask(task) {
   delete checkList[task];
 
-  // Update Workspace as necessary
+  // Update workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
 
-  workspace.tasks = checkList
-  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  workspace.tasks = checkList;
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
 const workspaceBox = document.getElementById("yaw");
@@ -404,7 +407,6 @@ function do_checklist() {
   inp.addEventListener("keyup", event => {
     if (event.code !== "Enter") return;
     newTask(inp.value);
-    console.log(inp.value);
     event.preventDefault();
   });
   
