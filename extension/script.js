@@ -233,33 +233,41 @@ try {
   console.error(e);
 }
 
+
 /** <Tasks Page> **/
-let checkList = [];
-async function newTask(event) {
-  if (event.key != "Enter") return;
+let checkList = {};
+async function newTask(task) {
+  checkList[task] = false;
   
+  // Update Workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
   
-  let task = event.value;
-  workspace.tasks.push({task: task, checked: false});
+  workspace.tasks = checkList
   setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  console.log(workspace)
 }
 
 async function setTask(task, checked) {
+  checkList[task] = checked;
+
+  // Update Workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
 
-  workspace.tasks[task] = checked;
-  await setToLocalStorage({[`${currentWorkspace}`]: workspace})
+  workspace.tasks = checkList
+  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
 }
 
 async function removeTask(task) {
+  delete checkList[task];
+
+  // Update Workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
 
-  delete workspace.tasks[task];
-  await setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  workspace.tasks = checkList
+  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
 }
 
 const workspaceBox = document.getElementById("yaw");
@@ -367,13 +375,15 @@ do_tabpane();
 
 function do_checklist() {
   const tasksp = document.getElementById("tasksp");
+  tasksp.textContent = "";
 
-  for (const task of checkList) {
+  Object.keys(checkList).forEach((task, i) => {
     const tabDiv = document.createElement("div");
     tabDiv.innerHTML = `
-      <i type="checkbox" class="checkbox1" name="c${i}" checked="${task.checked}">
-      <input type="text" class="addTask" onkeydown="newTask(this)"/>
+      <input type="checkbox" class="_checkbox" name="c${i}" checked="${checkList[task]}" onclick="setTask(${task}, this)"/>
+      <label class="checklist1Label" for="c${i}">${task}</label><br>
     `; 
+
     tasksp.appendChild(tabDiv);
   }
   
@@ -383,9 +393,20 @@ function do_checklist() {
 
   const addTaskDiv = document.createElement("div");
   addTaskDiv.innerHTML = `
-      <i class="material-icons">add</i>
-      <input class="addTask"></input>
+      <img src="./assets/plus-symbol-button.png" class="iconDetails" style="width: 16px; height: auto; margin: 16px 0;">
     `;
+
+  const inp = document.createElement("input");
+  inp.className = "addTask";
+  inp.addEventListener("keyup", event => {
+    if (event.key !== "Enter") return;
+    newTask(inp.value);
+    console.log(event)
+    event.preventDefault();
+  });
+  
+  addTaskDiv.appendChild(inp);
+  tasksp.append(addTaskDiv)
 
   const t = document.getElementsByClassName("");
   for (let i = 0; i < t.length; i++){
@@ -426,7 +447,7 @@ function do_addnew() {
     valid = /^[a-zA-Z0-9_]+$/.test(addnewtext.value);
   });
   addnewtext.addEventListener("keydown", function(event) {
-    if (event.code === "Enter") {
+    if (event.code === "enter") {
       create();
     }
   });
@@ -448,6 +469,7 @@ function do_storagelistener() {
         generate_workspaces();
       } else if (key === currentWorkspace) {
         generate_tabs();
+        do_checklist();
       }
     }
   });
