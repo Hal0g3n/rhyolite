@@ -196,6 +196,9 @@ async function onTabUpdated(tabId, tab, info) {
 }
 
 async function onTabAttached(tabId, info) {
+  // Could be new window
+  createPinnedTab(info.newWindowId);
+
   if (tab == undefined) return;
 
   for (let tab of active_links) {
@@ -221,6 +224,7 @@ try {
   chrome.tabs.onDetached.addListener(onTabRemoved);
   chrome.tabs.onCreated.addListener(onTabCreated);
   chrome.tabs.onUpdated.addListener(onTabUpdated);
+  chrome.tabs.onAttached.addListener(onTabAttached);
 
 } catch (e) {
   // wow! error is totally caught here.
