@@ -1,3 +1,4 @@
+importScripts("./utils/util.js")
 class Workspace {
     active_tabs = [
         {name: "google", url: "https://www.google.com"}
@@ -12,8 +13,6 @@ class Workspace {
         ]
     }
 }
-
-
 
 function getFromLocalStorage(key) {
     return new Promise(resolve => {
@@ -37,21 +36,54 @@ let currentWorkspace = "";
 let workspaces = null;
 
 async function createWorkspace(name) {
-    if (workspaces == null) 
-        workspaces = await getFromLocalStorage("workspaces")
+    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces")
+    if (!workspaces.includes(name)) return;
     
     setToLocalStorage({name: {
         active_links: [],
         stored_tabs: {}
     }})
+    
+    // Add to array and update storage
+    workspaces.push(name)
+    setToLocalStorage({workspaces: workspaces})
 }
 
 async function switchWorkspace(next) {
-
+    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces")
+    if (!workspaces.includes(next)) return;
+    
+    // Remove all unrelated tabs
+    await chrome.tabs.query({ 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
+    function (otherTabs) {
+        // If tab is not the extension tab, remove it
+        for (const tab of otherTabs) if (!tab.url.includes(chrome.runtime.id)) continue;
+        chrome.tabs.remove(otherTabIds);
+        
+        window.close();
+    }
+    );
+    
+    // Get active links to open
+    openSavedTabs((await getFromLocalStorage(next)).active_links)
+    currentWorkspace = next;
 }
 
 async function deleteWorkspace(name) {
+    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces")
+    if (!workspaces.includes(name)) return;
 
+    // remove from array and update storage
+    workspaces = workspaces.filter(e => e != name)
+    setToLocalStorage({ workspaces: workspaces })
+    chrome.storage.local.remove(name);
+
+    // Switch out if necessary
+    if (currentWorkspace != name) return;
+
+    // Nothing to switch out, L bozo
+    if (workspaces.length == 0) currentWorkspace = null;
+    else switchWorkspace(workspaces[0]);
 }
 
 
@@ -67,14 +99,13 @@ let onTabMoved = function(tabId, info) {
 
 }
 
-
 chrome.tabs.onMoved.addListener(onTabMoved);
 chrome.tabs.onRemoved.addListener(onTabRemoved);
 chrome.tabs.onDetached.addListner(onTabRemoved);
 chrome.tabs.onCreated.addListener(onTabCreated);
 
 function update() {
-
+    
 }
 
 function load_data() {
