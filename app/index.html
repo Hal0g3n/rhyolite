@@ -18,13 +18,36 @@
     </div>
     <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
      -->
-     <div class="sidenav">
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#clients">Clients</a>
-      <a href="#contact">Contact</a>
+     <div class="sidenav" id="yaw">
+      <div class='container'>
+        <img src='../Assets/plus-symbol-button.png' class='iconDetails' />
+        <a margin-left="5" >Add new</a>
+      </div>
+      <hr class="solidhr">
+      
     </div>
-    
+    <div class="main">
+      <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'tabsp')">Tabs</button>
+        <button class="tablinks" onclick="openTab(event, 'linksp')">Links</button>
+        <button class="tablinks" onclick="openTab(event, 'tasksp')">Tasks</button>
+      </div>
+      
+      <div id="tabsp" class="tabcontent">
+        
+        <!-- Add stuff -->
+      </div>
+      
+      <div id="linksp" class="tabcontent">
+        
+        <!-- Add stuff -->
+      </div>
+      
+      <div id="tasksp" class="tabcontent">
+        
+        
+      </div>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
