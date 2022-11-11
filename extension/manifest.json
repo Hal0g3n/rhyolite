@@ -1,0 +1,38 @@
+{
+   "manifest_version": 3,
+   "name": "Rhyolite",
+   "description": "What is this",
+   "version": "1.00",
+   "background": {
+      "service_worker": "background.js"
+   },
+   "permissions": ["storage", "activeTab", "scripting", "tabs", "contextMenus"],
+   "action": {
+      "default_popup": "popup.html",
+      "default_title": "Rhyolite",
+      "default_icon": {
+         "16": "/images/icon.png",
+         "32": "/images/icon.png",
+         "48": "/images/icon.png",
+         "128": "/images/icon.png"
+      }
+   },
+   "icons": {
+     "16": "/images/icon.png",
+     "32": "/images/icon.png",
+     "48": "/images/icon.png",
+     "128": "/images/icon.png"
+   },
+   "options_page": "options.html",
+   "commands": {
+      "Jump to Home": {
+         "suggested_key": {
+            "windows": "Ctrl+Shift+Y",
+            "mac": "Command+Shift+Y",
+            "chromeos": "Ctrl+Shift+Y",
+            "linux": "Ctrl+Shift+Y"
+         },
+         "description": "Jumps to the Home page"
+      }
+   }
+}

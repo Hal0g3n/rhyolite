@@ -1,15 +1,2 @@
-config.js
-*~
-.DS_Store
-.tern-port
-extension/.tern_port
-site/.DS_Store
-extension/archivedVersions
-extension.*
-_site
-*.zip
-media/*.mov
-.sass-cache
-TAGS
-reference
-Non Prod/*
+.gitignore
+/.vscode
