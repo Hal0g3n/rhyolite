@@ -81,8 +81,6 @@ async function createWorkspace(name) {
   // add to array and update storage
   workspaces.push(name);
   await setToLocalStorage({ workspaces: workspaces });
-  console.log(workspaces);
-  console.log(await getFromLocalStorage(name));
   switchWorkspace(name);
 
 }
@@ -105,19 +103,14 @@ async function switchWorkspace(next) {
           chrome.tabs.remove(tab.id);
     }
   );
-  alert(2);
 
   // Set active links to open
-  alert(next);
   const a = (await getFromLocalStorage(next));
   active_links = a.active_links;
-  alert(3);
   
   // Get active links to open
   openSavedTabs(active_links);
-  alert(4);
   currentWorkspace = next;
-  alert(5);
 }
 
 async function deleteWorkspace(name) {
@@ -150,6 +143,7 @@ async function onTabCreated(tab) {
   })
 
   // Update workspace if applicable
+  if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
 
@@ -165,7 +159,7 @@ async function onTabRemoved(tabId, info) {
   if (workspace == null) return;
 
   workspace.active_links = active_links
-  await setToLocalStorage(currentWorkspace, workspace);
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
 async function onTabMoved(tabId, info) {
@@ -174,11 +168,12 @@ async function onTabMoved(tabId, info) {
   active_links.splice(info.toIndex, 0, moved);
 
   // Update workspace if applicable
+  if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
 
   workspace.active_links = active_links
-  await setToLocalStorage(currentWorkspace, workspace);;
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
 async function onTabUpdated(tabId, tab, info) {
@@ -207,9 +202,6 @@ try {
   chrome.tabs.onDetached.addListener(onTabRemoved);
   chrome.tabs.onCreated.addListener(onTabCreated);
   chrome.tabs.onUpdated.addListener(onTabUpdated);
-
-  // testing...
-  console.log(await getFromLocalStorage("different"));
 
 } catch (e) {
   // wow! error is totally caught here.
@@ -362,11 +354,9 @@ function do_storagelistener() {
 
   chrome.storage.onChanged.addListener(function(changes, namespace) {
     // if (namespace !== "sync") return;
-    // alert(`${JSON.stringify(changes)}, ${namespace}`);
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "workspaces") {
         generate_workspaces(newValue);
-        console.log("WORKSPACES");
       }
     }
   });
@@ -374,6 +364,8 @@ function do_storagelistener() {
 }
 do_storagelistener();
 
+/*
+// remnants of stress testing (for BAD window.close debugging)
 async function test() {
   for (let i = 0; i < 100; i++) {
     await setToLocalStorage({_amogus: { amogus: "among us" + i }});
@@ -382,3 +374,4 @@ async function test() {
   console.log((await getFromLocalStorage("a")));
 }
 test();
+*/
