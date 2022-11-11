@@ -4,7 +4,7 @@
    "description": "What is this",
    "version": "1.00",
    "background": {
-      "service_worker": "background.html"
+      "service_worker": "background.js"
    },
    "permissions": ["storage", "activeTab", "scripting", "tabs"],
    "action": {
