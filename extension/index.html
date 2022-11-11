@@ -1,10 +1,30 @@
-<head>
-  <title>Rhyolite</title>
-  <link rel="stylesheet" type="text/css" href="main.css">
-  <script src="main.js"></script>
-</head>
-<body>
-  <div id="main">
-    <button id="amogus">Launch Amogus</button>
-  </div>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"></link>
+  </head>
+  <body>
+    <div class="sidenav" id="yaw">
+    <div class="container">
+      <img src="../assets/plus-symbol-button.png" class="iconDetails">
+      <a margin-left="5" >Add new</a>
+    </div>
+    <hr class="solidhr">
+    </div>
+    <div class="main">
+      <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'tabsp')">Tabs</button>
+        <button class="tablinks" onclick="openTab(event, 'linksp')">Links</button>
+        <button class="tablinks" onclick="openTab(event, 'tasksp')">Tasks</button>
+      </div>
+      <div id="tabsp" class="tabcontent"></div>
+      <div id="linksp" class="tabcontent"></div>
+      <div id="tasksp" class="tabcontent"></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
