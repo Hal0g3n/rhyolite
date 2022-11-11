@@ -14,13 +14,14 @@
     "tabs"
   ],
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "/images/favicon16.png",
-      "32": "/images/favicon32.png",
-      "48": "/images/favicon48.png",
-      "128": "/images/favicon128.png"
-    }
+     "default_popup": "popup.html",
+      "default_title": "Rhyolite",
+     "default_icon": {
+        "16": "/images/favicon16.png",
+        "32": "/images/favicon32.png",
+        "48": "/images/favicon48.png",
+        "128": "/images/favicon128.png"
+     }
   },
   "icons": {
     "16": "/images/favicon16.png",
@@ -34,5 +35,16 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
-  ]
+  ],
+
+   "commands": {
+      "Jump to Home": {
+         "suggested_key": {
+            "chromeos": "Ctrl+Space",
+            "linux": "Ctrl+Space",
+            "mac": "Command+Space",
+            "windows": "Ctrl+Space"
+         }
+      }
+   }
 }
