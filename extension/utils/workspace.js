@@ -45,14 +45,8 @@ async function createWorkspace(name) {
     }});
     
     // Add to array and update storage
-<<<<<<< HEAD
-    workspaces.push(name)
-    setToLocalStorage({workspaces: workspaces})
-    switchWorkspace(name)
-=======
     workspaces.push(name);
     setToLocalStorage({workspaces: workspaces});
->>>>>>> a871131b4f2cbf8f14dff8fee93089b8e6f1e43d
 }
 
 async function switchWorkspace(next) {
@@ -82,15 +76,9 @@ async function deleteWorkspace(name) {
     if (!workspaces.includes(name)) return;
 
     // remove from array and update storage
-<<<<<<< HEAD
-    workspaces = workspaces.filter(e => e != name)
-    setToLocalStorage({ workspaces: workspaces })
-    chrome.storage.sync.remove(name);
-=======
     workspaces = workspaces.filter(e => e != name);
     setToLocalStorage({ workspaces: workspaces });
     chrome.storage.local.remove(name);
->>>>>>> a871131b4f2cbf8f14dff8fee93089b8e6f1e43d
 
     // Switch out if necessary
     if (currentWorkspace != name) return;
