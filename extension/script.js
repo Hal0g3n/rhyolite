@@ -83,14 +83,14 @@ async function createWorkspace(name) {
   // add to array and update storage
   workspaces.push(name);
   await setToLocalStorage({ workspaces: workspaces });
-  switchWorkspace(name);
+  await switchWorkspace(name);
 
 }
 
 async function switchWorkspace(next) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
-    console.error("WOW, THIS SHOULD HAPPEN!!!");
+    console.error("WOW, THIS CAN TOTALLY HAPPEN!!!");
     return;
   }
   if (!workspaces.includes(next)) return;
@@ -103,7 +103,7 @@ async function switchWorkspace(next) {
   active_links = a.active_links;
 
   // Set checklist
-  checkList = a.tasks
+  checkList = a.tasks;
   
   // Get active links to open
   openSavedTabs(active_links);
@@ -122,12 +122,14 @@ async function deleteWorkspace(name) {
   await setToLocalStorage({ workspaces: workspaces });
   chrome.storage.local.remove(name);
 
+  active_links = [];
+
   // Switch out if necessary
   if (currentWorkspace != name) return;
 
   // Nothing to switch out, **L** bozo
-  if (workspaces.length == 0) currentWorkspace = null;
-  else switchWorkspace(workspaces[0]);
+  if (workspaces.length <= 0) currentWorkspace = null;
+  else await switchWorkspace(workspaces[0]);
 }
 
 
@@ -138,8 +140,10 @@ let active_links = ((await chrome.tabs.query({})).map(
 active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
 
 async function onTabCreated(tab) {
+  if (tab == null || tab.url == null) return;
   if (tab.url.includes("chrome-extension://")) return;
   if (tab.url.includes(chrome.runtime.id)) return;
+  // todo window id check
   // if (tab.windowId == (await chrome.windows.getCurrent()).id) return;
 
   active_links.push({
@@ -153,7 +157,7 @@ async function onTabCreated(tab) {
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
 
-  workspace.active_links = active_links
+  workspace.active_links = active_links;
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
@@ -161,6 +165,7 @@ async function onTabRemoved(tabId, info) {
   active_links = active_links.filter(e => e.id != tabId);
 
   // Update workspace if applicable
+  if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
 
@@ -169,7 +174,7 @@ async function onTabRemoved(tabId, info) {
 }
 
 async function onTabMoved(tabId, info) {
-  let moved = active_links[info.fromIndex]
+  let moved = active_links[info.fromIndex];
   active_links.splice(info.fromIndex, 1);
   active_links.splice(info.toIndex, 0, moved);
 
@@ -183,11 +188,11 @@ async function onTabMoved(tabId, info) {
 }
 
 async function onTabUpdated(tabId, info, tab) {
-  if (tab == undefined) return;
+  if (tab == undefined || tab.url == undefined) return;
   if (tab.url.includes("chrome-extension://")) return;
   if (tab.url.includes(chrome.runtime.id)) return;
 
-  for (let t of active_links) {
+  for (const t of active_links) {
     if (t.id != tabId) continue;
 
     t.name = tab.title;
@@ -196,6 +201,7 @@ async function onTabUpdated(tabId, info, tab) {
   }
   
   // Update workspace if applicable
+  if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
 
@@ -273,12 +279,14 @@ async function generate_workspaces() {
 
 async function generate_tabs() {
   let links = active_links;
+  /*
   if (currentWorkspace != null) {
     const a = await getFromLocalStorage(currentWorkspace);
     if (a != null) {
       links = a.active_links;
     }
   }
+  */
   const tabsp = document.getElementById("tabsp");
   const notesp = document.getElementById("notesp");
   tabsp.textContent = ``;
@@ -448,3 +456,10 @@ async function test() {
 }
 test();
 */
+
+async function removeAllWorkspaces() {
+  const workspaces = await getFromLocalStorage("workspaces");
+  workspaces.forEach(w => deleteWorkspace(w));
+}
+
+removeAllWorkspaces();
