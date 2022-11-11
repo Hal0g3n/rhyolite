@@ -37,17 +37,17 @@ function createPinnedTab(id) {
 }
 
 class Workspace {
-  active_tabs = [
-      { id: "1034", name: "google", url: "https://www.google.com"}
+  active_links = [
+    { id: "1034", name: "google", url: "https://www.google.com"}
   ];
 
-  stored_tabs = {
-      section: [
-          {id: "1034", name: "google", url: "https://www.google.com" }
-      ],
-      section2: [
-          {id: "1034", name: "google", url: "https://www.google.com" }
-      ]
+  stored_links = {
+    section: [
+      {id: "1034", name: "google", url: "https://www.google.com" }
+    ],
+    section2: [
+      {id: "1034", name: "google", url: "https://www.google.com" }
+    ]
   }
 };
 
@@ -78,13 +78,9 @@ async function createWorkspace(name) {
     workspaces = [];
   }
   if (!workspaces.includes(name)) return;
-  
-  chrome.tabs.query({}, (tabs) => {
-    tabs.map((tab) => {})
-  })
   setToLocalStorage({[`${name}`]: {
-      active_links: (await chrome.tabs.query({})).map(tab => ({id: tab.id, name: tab.title, url: tab.url})),
-      stored_tabs: {}
+    active_links: (await chrome.tabs.query({})).map(tab => ({id: tab.id, name: tab.title, url: tab.url})),
+    stored_links: {}
   }});
   
   // Add to array and update storage
@@ -176,7 +172,7 @@ async function onTabMoved(tabId, info) {
 async function onTabUpdated(tabId, info) {
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
-  for (let tab of workspace.active_tabs) {
+  for (let tab of workspace.active_links) {
       if (tab.id != tabId) continue;
 
       tab.name = info.title;
@@ -254,3 +250,17 @@ document.querySelectorAll(".tablinks").forEach((tab) => {
     openTab(event, tab.getAttribute("open_id"));
   });
 });
+
+function do_addnew() {
+  const addnew = document.getElementById("addnew");
+  const addnewtext = document.getElementById("addnewtext");
+  addnew.addEventListener("click", function(event) {
+    createWorkspace("");
+  });
+  function update() {
+    return /^[a-zA-Z0-9_]+$/.test(addnewtext.value);
+  }
+
+}
+
+do_addnew();

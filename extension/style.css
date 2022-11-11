@@ -167,3 +167,11 @@ body {
   margin-top: 0px;
   padding: none;
 }
+
+input[type=text] {
+  width: 100%;
+  padding: 3px 6px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  background-color: var(--bg);
+}
