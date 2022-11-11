@@ -5,7 +5,19 @@ function jumpToHome() {
   });
 }
 
-function closeOtherTabs() {
+async function closeOtherTabs() {
+  await chrome.tabs.query(
+    { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
+    function (otherTabs) {
+      // If tab is not the extension tab, remove it
+      for (const tab of otherTabs)
+        if (!tab.url.includes(chrome.runtime.id))
+          chrome.tabs.remove(tab.id);
+    }
+  );
+}
+
+function closeOtherTabsOld() {
   var home = chrome.tabs.query({ currentWindow: true, index: 0 });
   chrome.tabs.query(
     { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
@@ -13,8 +25,6 @@ function closeOtherTabs() {
       for (const tab of otherTabs)
         if (home.id != tab.id)
           chrome.tabs.remove(otherTabIds);
-
-      window.close();
     }
   );
 }
@@ -94,15 +104,7 @@ async function switchWorkspace(next) {
   if (!workspaces.includes(next)) return;
   
   // Remove all unrelated tabs
-  await chrome.tabs.query(
-    { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
-    function (otherTabs) {
-      // If tab is not the extension tab, remove it
-      for (const tab of otherTabs)
-        if (!tab.url.includes(chrome.runtime.id))
-          chrome.tabs.remove(tab.id);
-    }
-  );
+  await closeOtherTabs();
 
   // Set active links to open
   const a = (await getFromLocalStorage(next));
@@ -240,19 +242,28 @@ async function generate_workspaces() {
     if (currentWorkspace === workspace_name) {
       workspace_item.classList.add("currentWorkspace");      
     }
-    workspace_item.addEventListener("click", function(event) {
+    workspace_item.addEventListener("click", async function(event) {
       currentWorkspace = workspace_name;
-      generate_workspaces();
+      closeOtherTabs();
+      openSavedTabs((await getFromLocalStorage(workspace_name)).active_links);
+      generate_everything();
     });
     workspaceBox.appendChild(workspace_item);
   });
 }
 
+function generate_everything() {
+  generate_workspaces();
+}
+
 // `try` to generate
 try {
   generate_workspaces(await getFromLocalStorage("workspaces") || []);
-  const workspaces = await getFromLocalStorage("workspaces");
-  workspaces.forEach(w => deleteWorkspace(w));
+  /*
+  // don't delete workspace
+  // const workspaces = await getFromLocalStorage("workspaces");
+  // workspaces.forEach(w => deleteWorkspace(w));
+  */
 } catch (e) {
   console.error(e);
 }
