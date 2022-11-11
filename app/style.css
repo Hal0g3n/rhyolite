@@ -102,6 +102,7 @@ body {
   font-size: 17px;
   
 }
+
 /* Change background color of buttons on hover */
 .tab button:hover {
   background-color: var(--c1);
@@ -117,7 +118,8 @@ body {
   display: none;
   padding: 6px 12px;
 }
-.tabLink{
+
+.tabLink {
   color: #bbb;
   font-size: 8px;
 }
@@ -127,10 +129,9 @@ body {
   color: #DDD;
 }
 
-.tabOpenTab {
+.tabContainer {
   position: relative;
   top: 50%;
   transform: translateY(50%);
-  width: inherit
- 
+  width: inherit; 
 }

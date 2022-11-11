@@ -35,13 +35,11 @@ function openTab(evt, tab) {
 
 exampleT.forEach((ob) => {
   const tabDiv = document.createElement("div");
-  tabDiv.className = "tabOpenTab";
+  tabDiv.className = "tabContainer";
   tabDiv.innerHTML = `
-  <div class="tabContainer">
   <img class="tabPaneImg" src="${ob.favicon}">
   <p class="tabTitle">${ob.title}</p>
   <p class="tabLink">${ob.link}</p>
-  </div>
   `;
   tabsp.appendChild(tabDiv);
 });
