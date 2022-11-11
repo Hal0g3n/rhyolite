@@ -12,7 +12,7 @@ class Workspace {
             {id: "1034", name: "google", url: "https://www.google.com" }
         ]
     }
-}
+};
 
 function getFromLocalStorage(key) {
     return new Promise(resolve => {
@@ -36,33 +36,40 @@ let currentWorkspace = "";
 let workspaces = null;
 
 async function createWorkspace(name) {
-    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces")
+    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
     if (!workspaces.includes(name)) return;
     
     setToLocalStorage({[`${name}`]: {
         active_links: [],
         stored_tabs: {}
-    }})
+    }});
     
     // Add to array and update storage
+<<<<<<< HEAD
     workspaces.push(name)
     setToLocalStorage({workspaces: workspaces})
     switchWorkspace(name)
+=======
+    workspaces.push(name);
+    setToLocalStorage({workspaces: workspaces});
+>>>>>>> a871131b4f2cbf8f14dff8fee93089b8e6f1e43d
 }
 
 async function switchWorkspace(next) {
-    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces")
+    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
     if (!workspaces.includes(next)) return;
     
     // Remove all unrelated tabs
-    await chrome.tabs.query({ 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
-    function (otherTabs) {
-        // If tab is not the extension tab, remove it
-        for (const tab of otherTabs) if (!tab.url.includes(chrome.runtime.id))
-            chrome.tabs.remove(tab.id);
-        
-        window.close();
-    }
+    await chrome.tabs.query(
+        { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
+        function (otherTabs) {
+            // If tab is not the extension tab, remove it
+            for (const tab of otherTabs)
+                if (!tab.url.includes(chrome.runtime.id))
+                    chrome.tabs.remove(tab.id);
+            
+            window.close();
+        }
     );
     
     // Get active links to open
@@ -75,9 +82,15 @@ async function deleteWorkspace(name) {
     if (!workspaces.includes(name)) return;
 
     // remove from array and update storage
+<<<<<<< HEAD
     workspaces = workspaces.filter(e => e != name)
     setToLocalStorage({ workspaces: workspaces })
     chrome.storage.sync.remove(name);
+=======
+    workspaces = workspaces.filter(e => e != name);
+    setToLocalStorage({ workspaces: workspaces });
+    chrome.storage.local.remove(name);
+>>>>>>> a871131b4f2cbf8f14dff8fee93089b8e6f1e43d
 
     // Switch out if necessary
     if (currentWorkspace != name) return;
