@@ -20,8 +20,9 @@ function openTab(url) {
 }
 
 function main() {
-    const button = document.getElementById("button");
-    button.addEventListener("click", function(event) {
+    // do amogus
+    const amogus = document.getElementById("amogus");
+    amogus.addEventListener("click", function(event) {
         closeOtherTabs();
         openTab("https://amogus.surge.sh");
     })
