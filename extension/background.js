@@ -36,3 +36,6 @@ chrome.windows.getAll((windows) => {
         createPinnedTab(window.id);
     }
 });
+
+chrome.tabs.onAttached.addListener(a, info => createPinnedTab(info.newWindowId));
+chrome.tabs.onAttached.addListener(console.log);
