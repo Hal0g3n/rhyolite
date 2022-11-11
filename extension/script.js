@@ -231,21 +231,9 @@ try {
   console.error(e);
 }
 
-const exampleWorkspaces = [{
-  name: "Sus domesticus"
-}];
 const exampleChecklist = [{title: "Sevastopol", checked: true},{title: "Krakow", checked: true}];
 
 const workspaceBox = document.getElementById("yaw");
-const exampleTabs = [
-  {
-    url: "https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
-    title: "chill"
-  }, {
-    url: "https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
-    title: "chili"
-  }
-];
 
 async function generate_workspaces() {
   workspaces = await getFromLocalStorage("workspaces");
