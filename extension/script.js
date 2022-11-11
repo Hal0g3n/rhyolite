@@ -56,7 +56,7 @@ function setToLocalStorage(values) {
   });
 }
 
-let currentWorkspace = "";
+let currentWorkspace = null;
 let workspaces = null;
 let active_links = ((await chrome.tabs.query({})).map(
   e => ({id: e.id, name: e.title, url: e.url})
@@ -227,7 +227,8 @@ const exampleTabs = [
 
 const tasksp = document.getElementById("tasksp");
 
-function generate_workspaces(workspaces) {
+async function generate_workspaces() {
+  workspaces = await getFromLocalStorage("workspaces");
   const workspaceBox = document.getElementById("workspacebox");
   // clear workspace box
   [...workspaceBox.children].forEach((child) => child.remove());
@@ -236,6 +237,13 @@ function generate_workspaces(workspaces) {
     const workspace_item = document.createElement("a");
     workspace_item.style.cursor = "pointer";
     workspace_item.textContent = workspace_name;
+    if (currentWorkspace === workspace_name) {
+      workspace_item.classList.add("currentWorkspace");      
+    }
+    workspace_item.addEventListener("click", function(event) {
+      currentWorkspace = workspace_name;
+      generate_workspaces();
+    });
     workspaceBox.appendChild(workspace_item);
   });
 }
@@ -356,7 +364,7 @@ function do_storagelistener() {
     // if (namespace !== "sync") return;
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "workspaces") {
-        generate_workspaces(newValue);
+        generate_workspaces();
       }
     }
   });

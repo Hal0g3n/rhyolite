@@ -2,6 +2,9 @@
 
 * {
   font-family: "Montserrat";
+  color: white;
+  padding: 0;
+  margin: 0;
 }
 
 :root {
@@ -54,6 +57,10 @@ body {
   color: var(--t1);
 }
 
+.sidenav a.currentWorkspace {
+  color: var(--c1);
+}
+
 .main {
   margin-left: 160px; /* Same as the width of the sidenav */
   font-size: 28px; /* Increased text to enable scrolling */
@@ -63,11 +70,6 @@ body {
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
-}
-
-* {
-    padding:0;
-    margin:0;
 }
 
 .iconDetails {
@@ -95,6 +97,9 @@ body {
 
 .solidhr {
   border-top: 3px solid var(--t1);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
   margin-top: 12px;
   margin-bottom: 12px;
 }
