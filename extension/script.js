@@ -381,6 +381,12 @@ function do_addnew() {
       create();
     }
   });
+  const removecurrent = document.getElementById("removecurrent");
+  removecurrent.style.cursor = "pointer";
+  removecurrent.addEventListener("click", function(event) {
+    if (currentWorkspace == null) return;
+    deleteWorkspace(currentWorkspace);
+  });
 }
 do_addnew();
 
