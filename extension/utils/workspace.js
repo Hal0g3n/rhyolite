@@ -1,15 +1,15 @@
 importScripts("./utils/util.js")
 class Workspace {
     active_tabs = [
-        {name: "google", url: "https://www.google.com"}
+        { id: "1034", name: "google", url: "https://www.google.com"}
     ];
 
     stored_tabs = {
         section: [
-            { name: "google", url: "https://www.google.com" }
+            {id: "1034", name: "google", url: "https://www.google.com" }
         ],
         section2: [
-            { name: "google", url: "https://www.google.com" }
+            {id: "1034", name: "google", url: "https://www.google.com" }
         ]
     }
 }
@@ -39,7 +39,7 @@ async function createWorkspace(name) {
     if (workspaces == null) workspaces = await getFromLocalStorage("workspaces")
     if (!workspaces.includes(name)) return;
     
-    setToLocalStorage({name: {
+    setToLocalStorage({[`${name}`]: {
         active_links: [],
         stored_tabs: {}
     }})
@@ -47,6 +47,7 @@ async function createWorkspace(name) {
     // Add to array and update storage
     workspaces.push(name)
     setToLocalStorage({workspaces: workspaces})
+    switchWorkspace(name)
 }
 
 async function switchWorkspace(next) {
@@ -76,7 +77,7 @@ async function deleteWorkspace(name) {
     // remove from array and update storage
     workspaces = workspaces.filter(e => e != name)
     setToLocalStorage({ workspaces: workspaces })
-    chrome.storage.local.remove(name);
+    chrome.storage.sync.remove(name);
 
     // Switch out if necessary
     if (currentWorkspace != name) return;
@@ -87,22 +88,50 @@ async function deleteWorkspace(name) {
 }
 
 
-let onTabCreated = function(tab) {
+async function onTabCreated(tab) {
+    let workspace = await getFromLocalStorage(currentWorkspace)
+    workspace.active_links.push({
+        id: tab.id,
+        name: tab.title,
+        url: tab.url
+    })
 
+    setToLocalStorage(currentWorkspace, workspace)
 }
 
-let onTabRemoved = function(tabId, info) {
+async function onTabRemoved(tabId, info) {
+    let workspace = (await getFromLocalStorage(currentWorkspace)).filter(e => 
+        e.id != tabId
+    );
 
+    setToLocalStorage(currentWorkspace, workspace)
 }
 
-let onTabMoved = function(tabId, info) {
+async function onTabMoved(tabId, info) {
+    let workspace = await getFromLocalStorage(currentWorkspace)
+    let moved = workspace.active_links[info.fromIndex]
+    
+    workspace = workspace.filter(e, ind => ind != info.fromIndex)
+    workspace.splice(info.toIndex, 0, moved);
+    
+    setToLocalStorage(currentWorkspace, workspace)
+}
 
+async function onTabUpdated(tabId, info) {
+    let workspace = await getFromLocalStorage(currentWorkspace)
+    for (let tab of workspace.active_tabs) {
+        if (tab.id != tabId) continue;
+
+        tab.name = info.title
+        tab.url = info.url;
+    }
 }
 
 chrome.tabs.onMoved.addListener(onTabMoved);
 chrome.tabs.onRemoved.addListener(onTabRemoved);
 chrome.tabs.onDetached.addListner(onTabRemoved);
 chrome.tabs.onCreated.addListener(onTabCreated);
+chrome.tabs.onUpdated.addListener(onTabUpdated);
 
 function update() {
 
