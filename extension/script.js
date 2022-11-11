@@ -53,7 +53,17 @@ function getFromLocalStorage(key) {
 
 function setToLocalStorage(values) {
   return new Promise(resolve => {
-    chrome.storage.local.set(values, function () {
+    chrome.storage.local.set(values, function() {
+      if (chrome.runtime.lastError)
+        alert(`Error saving to browser storage:\n${chrome.runtime.lastError.message}`);
+      resolve();
+    });
+  });
+}
+
+function deleteFromLocalStorage(key) {
+  return new Promise(resolve => {
+    chrome.storage.local.remove(key, function() {
       if (chrome.runtime.lastError)
         alert(`Error saving to browser storage:\n${chrome.runtime.lastError.message}`);
       resolve();
@@ -120,7 +130,7 @@ async function deleteWorkspace(name) {
   // remove from array and update storage
   workspaces = workspaces.filter(e => e != name);
   await setToLocalStorage({ workspaces: workspaces });
-  chrome.storage.local.remove(name);
+  await deleteFromLocalStorage(name);
 
   active_links = [];
 
