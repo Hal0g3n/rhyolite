@@ -1,3 +1,5 @@
+importScripts("./utils/util.js")
+
 // Shortcut Command Listener
 chrome.commands.onCommand.addListener(function (command) {
     switch (command) {
