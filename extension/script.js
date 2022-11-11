@@ -137,7 +137,6 @@ async function deleteWorkspace(name) {
   else switchWorkspace(workspaces[0]);
 }
 
-
 async function onTabCreated(tab) {
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
@@ -214,68 +213,95 @@ const exampleTabs = [
   }
 ];
 
-const tabsp = document.getElementById("tabsp");
-const workspaceBox = document.getElementById("yaw");
 const tasksp = document.getElementById("tasksp");
-// replace exampleW
-exampleWorkspaces.forEach((workspace) => {
-  const workspace_item = document.createElement("a");
-  workspace_item.innerHTML = workspace.name;
-  workspaceBox.appendChild(workspace_item);
-});
 
-function openTab(evt, tab) {
-  let tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (let i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (let i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(tab).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-
-exampleTabs.forEach((ob) => {
-  const tabDiv = document.createElement("div");
-  tabDiv.className = "tabContainer";
-  const { origin } = new URL(ob.url);
-  tabDiv.innerHTML = `
-    <img class="tabPaneImg" src="${origin}/favicon.ico">
-    <div class="tabDiv">
-    <p class="tabTitle">${ob.title}</p>
-    <p class="tabLink">${ob.url}</p>
-    </div>
-  `;
-  tabsp.appendChild(tabDiv);
-});
-
-document.querySelectorAll(".tablinks").forEach((tab) => {
-  tab.addEventListener("click", function(event) {
-    openTab(event, tab.getAttribute("open_id"));
+function generate_workspaces(workspaces) {
+  const workspaceBox = document.getElementById("workspacebox");
+  // clear workspace box
+  [...workspaceBox.children].forEach((child) => child.remove());
+  workspaces.forEach((workspace_name) => {
+    // add stuff
+    const workspace_item = document.createElement("a");
+    workspace_item.style.cursor = "pointer";
+    workspace_item.textContent = workspace_name;
+    workspaceBox.appendChild(workspace_item);
   });
-});
+}
 
-for (let i = 0; i < exampleChecklist.length; i++) {
-  const tabDiv = document.createElement("div");
-  tabDiv.innerHTML = `
-  <input type="checkbox" class="checkbox1" name="c${i}" checked="${exampleChecklist[i].checked}">
-  <label class="checklist1Label" for="c${i}">${exampleChecklist[i].title}</label><br>
-  `;
-  tasksp.appendChild(tabDiv);
+// `try` to generate
+try {
+  generate_workspaces(await getFromLocalStorage("workspaces") || []);
+} catch (e) {
+  console.error(e);
 }
-const t = document.getElementsByClassName("");
-for (let i = 0; i < t.length; i++){
-  t[i].addEventListener('change', function() {
-    if (this.checked) {
-      //do stuff I am retarded
-    } else {
-      
+
+function do_tabpane() {
+
+  function openTab(evt, tab) {
+    let tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (let i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
     }
-  })
+    tablinks = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tab).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  document.querySelectorAll(".tablinks").forEach((tab) => {
+    tab.addEventListener("click", function(event) {
+      openTab(event, tab.getAttribute("open_id"));
+    });
+  });
+
 }
+do_tabpane();
+
+function do_tabs() {
+
+  exampleTabs.forEach((ob) => {
+    const tabsp = document.getElementById("tabsp");
+    const tabDiv = document.createElement("div");
+    tabDiv.className = "tabContainer";
+    const { origin } = new URL(ob.url);
+    tabDiv.innerHTML = `
+      <img class="tabPaneImg" src="${origin}/favicon.ico">
+      <div class="tabDiv">
+      <p class="tabTitle">${ob.title}</p>
+      <p class="tabLink">${ob.url}</p>
+      </div>
+    `;
+    tabsp.appendChild(tabDiv);
+  });
+
+}
+do_tabs();
+
+function do_checklist() {
+  const tasksp = document.getElementById("tasksp");
+  for (let i = 0; i < exampleChecklist.length; i++) {
+    const tabDiv = document.createElement("div");
+    tabDiv.innerHTML = `
+      <input type="checkbox" class="checkbox1" name="c${i}" checked="${exampleChecklist[i].checked}">
+      <label class="checklist1Label" for="c${i}">${exampleChecklist[i].title}</label><br>
+    `;
+    tasksp.appendChild(tabDiv);
+  }
+  const t = document.getElementsByClassName("");
+  for (let i = 0; i < t.length; i++){
+    t[i].addEventListener('change', function() {
+      if (this.checked) {
+        // do stuff I am retarded (no)
+      } else {
+        
+      }
+    })
+  }
+}
+do_checklist();
 
 function do_addnew() {
   const addnew = document.getElementById("addnew");
@@ -320,7 +346,8 @@ function do_storagelistener() {
         `Old value was "${oldValue}", new value is "${newValue}".`
       );
       if (key === "workspaces") {
-        console.log(value);
+        generate_workspaces(value);
+        console.log("WORKSPACES");
       }
     }
   });
