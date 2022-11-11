@@ -1,9 +1,11 @@
 // importScripts("./utils/util.js", "./utils/workspace.js");
 
-if (chrome && chrome.storage) {
+try {
   chrome.storage.sync.get("data", function (item) {
     console.log(item);
   });
+} catch (e) {
+  // wow! error is caught here.
 }
 
 const exampleW = [{
