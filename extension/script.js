@@ -180,17 +180,21 @@ async function onTabUpdated(tabId, info) {
   }
 }
 
-// add listeners (isn't it obvious?)
-chrome.tabs.onMoved.addListener(onTabMoved);
-chrome.tabs.onRemoved.addListener(onTabRemoved);
-chrome.tabs.onDetached.addListener(onTabRemoved);
-chrome.tabs.onCreated.addListener(onTabCreated);
-chrome.tabs.onUpdated.addListener(onTabUpdated);
-
 try {
+
+  // add listeners (isn't it obvious?)
+  chrome.tabs.onMoved.addListener(onTabMoved);
+  chrome.tabs.onRemoved.addListener(onTabRemoved);
+  chrome.tabs.onDetached.addListener(onTabRemoved);
+  chrome.tabs.onCreated.addListener(onTabCreated);
+  chrome.tabs.onUpdated.addListener(onTabUpdated);
+
+  // testing...
   console.log(await getFromLocalStorage("workspaces"));
+
 } catch (e) {
   // wow! error is totally caught here.
+  console.error(e);
 }
 
 const exampleWorkspaces = [{
@@ -254,13 +258,45 @@ document.querySelectorAll(".tablinks").forEach((tab) => {
 function do_addnew() {
   const addnew = document.getElementById("addnew");
   const addnewtext = document.getElementById("addnewtext");
+  addnew.style.cursor = "pointer";
   addnew.addEventListener("click", function(event) {
-    createWorkspace("");
+    addnewtext.style.display = "block";
+    addnewtext.value = "";
+    addnewtext.focus();
+    addnew.style.display = "none";
   });
-  function update() {
-    return /^[a-zA-Z0-9_]+$/.test(addnewtext.value);
+  let valid = false;
+  async function create() {
+    if (!valid) return;
+    const workspaceName = addnewtext.value;
+    try {
+      await createWorkspace(workspaceName);
+    } catch (e) {
+      console.error(e);
+    }
+    addnew.style.display = "block";
+    addnewtext.style.display = "none";
   }
+  addnewtext.addEventListener("input", function(event) {
+    valid = /^[a-zA-Z0-9_]+$/.test(addnewtext.value);
+  });
+  addnewtext.addEventListener("keydown", async function(event) {
+    if (event.code === "Enter") {
+      await create();
+    }
+  });
+}
+do_addnew();
+
+function do_storagelistener() {
+
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
+    if (namespace !== "sync") return;
+    for (let [key, { old, value }] of Object.entries(changes)) {
+      if (key === "workspaces") {
+        
+      }
+    }
+  });
 
 }
-
-do_addnew();
