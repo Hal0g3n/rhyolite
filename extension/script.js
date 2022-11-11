@@ -17,18 +17,6 @@ async function closeOtherTabs() {
   );
 }
 
-function closeOtherTabsOld() {
-  var home = chrome.tabs.query({ currentWindow: true, index: 0 });
-  chrome.tabs.query(
-    { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
-    function (otherTabs) {
-      for (const tab of otherTabs)
-        if (home.id != tab.id)
-          chrome.tabs.remove(otherTabIds);
-    }
-  );
-}
-
 // Opens the stored away tabs in the workspace
 function openSavedTabs(links) {
   links.forEach((link) => 
@@ -41,9 +29,16 @@ function openSavedTabs(links) {
 
 // Creates the Home Tab (pinned) in the given window
 function createPinnedTab(id) {
-  chrome.tabs.create({ url: "./index.html", windowId: id, active: false, pinned: true }, (tab) => {
-    chrome.tabs.move(tab.id, { index: 0 });
-  });
+  chrome.tabs.query({'windowId': id}, tabs => {
+      // Checks for the pinned tab
+      for (const tab of tabs) if (tab.url.includes(chrome.runtime.id)) return;
+
+      // No hav, can create
+      chrome.tabs.create({ url: "./index.html", windowId: id, active: false, pinned: true }, (tab) => {
+        chrome.tabs.move(tab.id, { index: 0 });
+      });
+    }
+  );
 }
 
 /** <Storage Functionz> **/
@@ -137,6 +132,7 @@ async function deleteWorkspace(name) {
 
 async function onTabCreated(tab) {
   if (tab.url.includes(chrome.runtime.id)) return;
+  if (tab.windowId == (await chrome.windows.getCurrent()).id) return;
 
   active_links.push({
     id: tab.id,
@@ -188,6 +184,24 @@ async function onTabUpdated(tabId, tab, info) {
     tab.url = info.url;
   }
   
+  // Update workspace if applicable
+  let workspace = await getFromLocalStorage(currentWorkspace);
+  if (workspace == null) return;
+
+  workspace.active_links = active_links
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+}
+
+async function onTabAttached(tabId, info) {
+  if (tab == undefined) return;
+
+  for (let tab of active_links) {
+    if (tab.id != tabId) continue;
+
+    tab.name = info.title;
+    tab.url = info.url;
+  }
+
   // Update workspace if applicable
   let workspace = await getFromLocalStorage(currentWorkspace);
   if (workspace == null) return;
