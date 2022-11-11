@@ -1,6 +1,6 @@
 
 const exampleW = [{
-    name: "glong"
+  name: "glong"
 }];
 
 const exampleT = [{
@@ -12,7 +12,7 @@ const exampleT = [{
 const tabsp = document.getElementById("tabsp");
 const workspaceBox = document.getElementById("yaw");
 
-//replace exampleW
+// replace exampleW
 exampleW.forEach((workspace) => {
     const witem = document.createElement("a");
     witem.innerHTML = workspace.name;
@@ -33,12 +33,12 @@ function openTab(evt, tab) {
   evt.currentTarget.className += " active";
 }
 
-exampleT.forEach((ob)=>{
+exampleT.forEach((ob) => {
   const tabDiv = document.createElement("div");
-  tabDiv.className = "tabOpenTab";
+  tabDiv.className = "tabContainer";
   tabDiv.innerHTML = `
-  <div class="tabContainer">
   <img class="tabPaneImg" src="${ob.favicon}">
+  <div class="tabDiv">
   <p class="tabTitle">${ob.title}</p>
   <p class="tabLink">${ob.link}</p>
   </div>

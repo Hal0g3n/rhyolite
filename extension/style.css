@@ -1,57 +1,63 @@
-:root{
+:root {
   --bg:   #171718;
   
   --t1: #00B388;
   --c1: #CB3D6E;
   --c2: #5D437E;
+  --c3: #00589F;
+  --c4: #0084C2;
 }
-body{
+
+body {
   background: var(--bg);
 }
+
 .sidenav {
-    height: 100%;
-    width: 256px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: var(--bg);
-    overflow-x: hidden;
-    padding-top: 20px;
-    border-color: var(--t1);
-    border-right-width: 3px;
-    border-right-style: solid;  
-  }
-  
-  .sidenav a {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #818181;
-    display: block;
-  }
-  .sidenav div a {
-    padding: 6px 8px 6px 16px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #818181;
-    display: block;
-  }
-  
-  .sidenav a:hover {
-    color: var(--t1);
-  }
-  
-  .main {
-    margin-left: 160px; /* Same as the width of the sidenav */
-    font-size: 28px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
-  }
-  
-  @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-  }
+  height: 100%;
+  width: 256px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: var(--bg);
+  overflow-x: hidden;
+  padding-top: 20px;
+  border-color: var(--t1);
+  border-right-width: 3px;
+  border-right-style: solid;  
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #818181;
+  display: block;
+}
+
+.sidenav div a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #818181;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: var(--t1);
+}
+
+.main {
+  margin-left: 160px; /* Same as the width of the sidenav */
+  font-size: 28px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
 * {
     padding:0;
     margin:0;
@@ -76,14 +82,23 @@ body{
   width: auto;
   height: auto;
 }
+
 .solidhr {
   border-top: 3px solid var(--t1);
   margin-top: 12px;
   margin-bottom: 12px;
 }
-.main{
+
+.main {
   margin-left: 256px;
 }
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  background-color: transparent;
+}
+
 .tab button {
   background-color: var(--t1);
   float: left;
@@ -95,6 +110,7 @@ body{
   font-size: 17px;
   
 }
+
 /* Change background color of buttons on hover */
 .tab button:hover {
   background-color: var(--c1);
@@ -102,32 +118,45 @@ body{
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: var(--c2);
+  background-color: var(--c4);
+}
+
+.tabContainer {
+  border: 2px solid red;
+  border-radius: 5px;
+  padding: 6px 6px;
+  position: relative;
+  width: inherit;
 }
 
 /* Style the tab content */
 .tabcontent {
   display: none;
   padding: 6px 12px;
-  /* border: 1px solid #ccc; */
-  border-top: 28px;
-  width: 512px;
-  margin-top: 48px;
 }
-.tabOpenTab p{
-  color: #bbb;
-  font-size: 8px;
+
+.tabPaneImg {
+  display: inline;
+  width: 32px;
+  height: 32px;
 }
+
+.tabDiv {
+  display: inline;
+  position: absolute;
+}
+
 .tabTitle {
-  font-size: 10px;
+  padding: 2px 6px;
+  font-size: 12px;
   color: #DDD;
 }
-.tabOpenTab{
-  position: relative;
-  top: 50%;
-  transform: translateY(50%);
-  max-width:16px;
-  max-height:16px;
-  width: inherit
- 
+
+.tabLink {
+  padding: 2px 6px;
+  color: #BBB;
+  font-size: 8px;
+  left: 6px;
+  margin-top: 0px;
+  padding: none;
 }
