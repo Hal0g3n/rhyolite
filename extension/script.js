@@ -140,7 +140,7 @@ active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e
 async function onTabCreated(tab) {
   if (tab.url.includes("chrome-extension://")) return;
   if (tab.url.includes(chrome.runtime.id)) return;
-  if (tab.windowId == (await chrome.windows.getCurrent()).id) return;
+  // if (tab.windowId == (await chrome.windows.getCurrent()).id) return;
 
   active_links.push({
     id: tab.id,
@@ -182,7 +182,7 @@ async function onTabMoved(tabId, info) {
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
-async function onTabUpdated(tabId, info, tab) {
+async function onTabUpdated(tabId, tab, info) {
   if (tab.url.includes("chrome-extension://")) return;
   if (tab.url.includes(chrome.runtime.id)) return;
   if (tab == undefined) return;
@@ -234,7 +234,7 @@ async function setTask(task, checked) {
   let workspace = await getFromLocalStorage(currentWorkspace);
 
   workspace.tasks[task] = checked;
-  setToLocalStorage({[`${currentWorkspace}`]: workspace})
+  await setToLocalStorage({[`${currentWorkspace}`]: workspace})
 }
 
 async function removeTask(task) {
@@ -242,7 +242,7 @@ async function removeTask(task) {
   let workspace = await getFromLocalStorage(currentWorkspace);
 
   delete workspace.tasks[task];
-  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace })
 }
 
 const workspaceBox = document.getElementById("yaw");
@@ -264,7 +264,7 @@ async function generate_workspaces() {
       currentWorkspace = workspace_name;
       closeOtherTabs();
       openSavedTabs((await getFromLocalStorage(workspace_name)).active_links);
-      generate_everything();
+      await generate_everything();
     });
     workspaceBox.appendChild(workspace_item);
   });
