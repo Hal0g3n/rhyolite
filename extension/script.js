@@ -1,22 +1,31 @@
+// importScripts("./utils/util.js", "./utils/workspace.js");
+
+chrome.storage.sync.get("data", function (item) {
+  console.log(item);
+});
 
 const exampleW = [{
-  name: "glong"
+  name: "Sus domesticus"
 }];
 
-const exampleT = [{
-  link: "https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
-  favicon: "https://s2.googleusercontent.com/s2/favicons?domain_url=https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
-  title: "chill"
-}];
+const exampleT = [
+  {
+    url: "https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
+    title: "chill"
+  }, {
+    url: "https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
+    title: "chill"
+  }
+];
 
 const tabsp = document.getElementById("tabsp");
 const workspaceBox = document.getElementById("yaw");
 
 // replace exampleW
 exampleW.forEach((workspace) => {
-    const witem = document.createElement("a");
-    witem.innerHTML = workspace.name;
-    workspaceBox.appendChild(witem);
+  const workspace_item = document.createElement("a");
+  workspace_item.innerHTML = workspace.name;
+  workspaceBox.appendChild(workspace_item);
 });
 
 function openTab(evt, tab) {
@@ -36,12 +45,19 @@ function openTab(evt, tab) {
 exampleT.forEach((ob) => {
   const tabDiv = document.createElement("div");
   tabDiv.className = "tabContainer";
+  const { origin } = new URL(ob.url);
   tabDiv.innerHTML = `
-  <img class="tabPaneImg" src="${ob.favicon}">
-  <div class="tabDiv">
-  <p class="tabTitle">${ob.title}</p>
-  <p class="tabLink">${ob.link}</p>
-  </div>
+    <img class="tabPaneImg" src="${origin}/favicon.ico">
+    <div class="tabDiv">
+    <p class="tabTitle">${ob.title}</p>
+    <p class="tabLink">${ob.url}</p>
+    </div>
   `;
   tabsp.appendChild(tabDiv);
+});
+
+document.querySelectorAll(".tablinks").forEach((tab) => {
+  tab.addEventListener("click", function(event) {
+    openTab(event, tab.getAttribute("open_id"));
+  });
 });
