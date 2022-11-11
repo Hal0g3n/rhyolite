@@ -76,14 +76,16 @@ async function createWorkspace(name) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
     workspaces = [];
+  } else {
+    if (!workspaces.includes(name)) return;
   }
-  if (!workspaces.includes(name)) return;
-  setToLocalStorage({[`${name}`]: {
+
+  setToLocalStorage({[name]: {
     active_links: (await chrome.tabs.query({})).map(tab => ({id: tab.id, name: tab.title, url: tab.url})),
     stored_links: {}
   }});
-  
-  // Add to array and update storage
+
+  // add to array and update storage
   workspaces.push(name);
   setToLocalStorage({ workspaces: workspaces });
   switchWorkspace(name);
@@ -291,12 +293,17 @@ do_addnew();
 function do_storagelistener() {
 
   chrome.storage.onChanged.addListener(function(changes, namespace) {
-    if (namespace !== "sync") return;
+    // if (namespace !== "sync") return;
     for (let [key, { old, value }] of Object.entries(changes)) {
+      console.log(
+        `Storage key "${key}" in namespace "${namespace}" changed.`,
+        `Old value was "${oldValue}", new value is "${newValue}".`
+      );
       if (key === "workspaces") {
-        
+        console.log(value);
       }
     }
   });
 
 }
+do_storagelistener();
