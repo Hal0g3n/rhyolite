@@ -27,10 +27,10 @@
    "commands": {
       "Jump to Home": {
          "suggested_key": {
-            "chromeos": "Ctrl+Space",
-            "linux": "Ctrl+Space",
-            "mac": "Command+Space",
-            "windows": "Ctrl+Space"
+            "windows": "Ctrl+Shift+Y",
+            "mac": "Command+Shift+Y",
+            "chromeos": "Ctrl+Shift+Y",
+            "linux": "Ctrl+Shift+Y"
          },
          "description": "Jumps to the Home page"
       }
