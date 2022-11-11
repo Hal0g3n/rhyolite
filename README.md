@@ -1,2 +1,2 @@
 # rhyolite
-among
+amongst
