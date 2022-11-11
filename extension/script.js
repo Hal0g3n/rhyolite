@@ -63,6 +63,8 @@ async function createWorkspace(name) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
   if (workspaces == null) {
     workspaces = [];
+  } else {
+    if (!workspaces.includes(name)) return;
   }
   if (workspaces.includes(name)) return;
 
@@ -70,8 +72,8 @@ async function createWorkspace(name) {
       active_links: active_links,
       stored_tabs: {}
   }});
-  
-  // Add to array and update storage
+
+  // add to array and update storage
   workspaces.push(name);
   setToLocalStorage({ workspaces: workspaces });
   switchWorkspace(name);
@@ -185,66 +187,180 @@ async function onTabUpdated(tabId, tab, info) {
   setToLocalStorage(currentWorkspace, workspace);
 }
 
-// add listeners (isn't it obvious?)
-chrome.tabs.onMoved.addListener(onTabMoved);
-chrome.tabs.onRemoved.addListener(onTabRemoved);
-chrome.tabs.onDetached.addListener(onTabRemoved);
-chrome.tabs.onCreated.addListener(onTabCreated);
-chrome.tabs.onUpdated.addListener(onTabUpdated);
+try {
+
+  // add listeners (isn't it obvious?)
+  chrome.tabs.onMoved.addListener(onTabMoved);
+  chrome.tabs.onRemoved.addListener(onTabRemoved);
+  chrome.tabs.onDetached.addListener(onTabRemoved);
+  chrome.tabs.onCreated.addListener(onTabCreated);
+  chrome.tabs.onUpdated.addListener(onTabUpdated);
 
 chrome.storage.onChanged.addListener(console.log);
 
-try {
+  // testing...
   console.log(await getFromLocalStorage("workspaces"));
+
 } catch (e) {
   // wow! error is totally caught here.
+  console.error(e);
 }
 
 const exampleWorkspaces = [{
   name: "Sus domesticus"
 }];
+const exampleChecklist = [{title: "Sevastopol", checked: true},{title: "Krakow", checked: true}];
 
 const tabsp = document.getElementById("tabsp");
 const workspaceBox = document.getElementById("yaw");
-
-// replace exampleW
-exampleWorkspaces.forEach((workspace) => {
-  const workspace_item = document.createElement("a");
-  workspace_item.innerHTML = workspace.name;
-  workspaceBox.appendChild(workspace_item);
-});
-
-function openTab(evt, tab) {
-  let tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (let i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
+const exampleTabs = [
+  {
+    url: "https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
+    title: "chill"
+  }, {
+    url: "https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
+    title: "chill"
   }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (let i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(tab).style.display = "block";
-  evt.currentTarget.className += " active";
+];
+
+const tasksp = document.getElementById("tasksp");
+
+function generate_workspaces(workspaces) {
+  const workspaceBox = document.getElementById("workspacebox");
+  // clear workspace box
+  [...workspaceBox.children].forEach((child) => child.remove());
+  workspaces.forEach((workspace_name) => {
+    // add stuff
+    const workspace_item = document.createElement("a");
+    workspace_item.style.cursor = "pointer";
+    workspace_item.textContent = workspace_name;
+    workspaceBox.appendChild(workspace_item);
+  });
 }
 
-console.log(active_links)
-active_links.forEach((ob) => {
-  const tabDiv = document.createElement("div");
-  tabDiv.className = "tabContainer";
-  const { origin } = new URL(ob.url);
-  tabDiv.innerHTML = `
-    <img class="tabPaneImg" src="${origin}/favicon.ico">
-    <div class="tabDiv">
-    <p class="tabTitle">${ob.title}</p>
-    <p class="tabLink">${ob.url}</p>
-    </div>
-  `;
-  tabsp.appendChild(tabDiv);
-});
+// `try` to generate
+try {
+  generate_workspaces(await getFromLocalStorage("workspaces") || []);
+} catch (e) {
+  console.error(e);
+}
 
-document.querySelectorAll(".tablinks").forEach((tab) => {
-  tab.addEventListener("click", function(event) {
-    openTab(event, tab.getAttribute("open_id"));
+function do_tabpane() {
+
+  function openTab(evt, tab) {
+    let tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (let i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tab).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  document.querySelectorAll(".tablinks").forEach((tab) => {
+    tab.addEventListener("click", function(event) {
+      openTab(event, tab.getAttribute("open_id"));
+    });
   });
-});
+
+}
+do_tabpane();
+
+function do_tabs() {
+
+  exampleTabs.forEach((ob) => {
+    const tabsp = document.getElementById("tabsp");
+    const tabDiv = document.createElement("div");
+    tabDiv.className = "tabContainer";
+    const { origin } = new URL(ob.url);
+    tabDiv.innerHTML = `
+      <img class="tabPaneImg" src="${origin}/favicon.ico">
+      <div class="tabDiv">
+      <p class="tabTitle">${ob.title}</p>
+      <p class="tabLink">${ob.url}</p>
+      </div>
+    `;
+    tabsp.appendChild(tabDiv);
+  });
+
+}
+do_tabs();
+
+function do_checklist() {
+  const tasksp = document.getElementById("tasksp");
+  for (let i = 0; i < exampleChecklist.length; i++) {
+    const tabDiv = document.createElement("div");
+    tabDiv.innerHTML = `
+      <input type="checkbox" class="checkbox1" name="c${i}" checked="${exampleChecklist[i].checked}">
+      <label class="checklist1Label" for="c${i}">${exampleChecklist[i].title}</label><br>
+    `;
+    tasksp.appendChild(tabDiv);
+  }
+  const t = document.getElementsByClassName("");
+  for (let i = 0; i < t.length; i++){
+    t[i].addEventListener('change', function() {
+      if (this.checked) {
+        // do stuff I am retarded (no)
+      } else {
+        
+      }
+    })
+  }
+}
+do_checklist();
+
+function do_addnew() {
+  const addnew = document.getElementById("addnew");
+  const addnewtext = document.getElementById("addnewtext");
+  addnew.style.cursor = "pointer";
+  addnew.addEventListener("click", function(event) {
+    addnewtext.style.display = "block";
+    addnewtext.value = "";
+    addnewtext.focus();
+    addnew.style.display = "none";
+  });
+  let valid = false;
+  async function create() {
+    if (!valid) return;
+    const workspaceName = addnewtext.value;
+    try {
+      await createWorkspace(workspaceName);
+    } catch (e) {
+      console.error(e);
+    }
+    addnew.style.display = "block";
+    addnewtext.style.display = "none";
+  }
+  addnewtext.addEventListener("input", function(event) {
+    valid = /^[a-zA-Z0-9_]+$/.test(addnewtext.value);
+  });
+  addnewtext.addEventListener("keydown", async function(event) {
+    if (event.code === "Enter") {
+      await create();
+    }
+  });
+}
+do_addnew();
+
+function do_storagelistener() {
+
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
+    // if (namespace !== "sync") return;
+    for (let [key, { old, value }] of Object.entries(changes)) {
+      console.log(
+        `Storage key "${key}" in namespace "${namespace}" changed.`,
+        `Old value was "${oldValue}", new value is "${newValue}".`
+      );
+      if (key === "workspaces") {
+        generate_workspaces(value);
+        console.log("WORKSPACES");
+      }
+    }
+  });
+
+}
+do_storagelistener();
