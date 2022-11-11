@@ -14,3 +14,8 @@ chrome.commands.onCommand.addListener(function (command) {
             console.log(`Command ${command} not found`);
     }
 });
+
+// when a new window is created, open index.html
+chrome.windows.onCreated.addListener(function() {
+    chrome.tabs.create({url: "./index.html" });
+});
