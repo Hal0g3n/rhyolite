@@ -79,7 +79,8 @@ async function createWorkspace(name) {
   await setToLocalStorage({
     [`${name}`]: {
       active_links: active_links,
-      stored_tabs: {}
+      stored_tabs: {},
+      tasks: []
     }
   });
 
@@ -195,27 +196,6 @@ async function onTabUpdated(tabId, tab, info) {
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
 }
 
-async function onTabAttached(tabId, info) {
-  // Could be new window
-  createPinnedTab(info.newWindowId);
-
-  if (tab == undefined) return;
-
-  for (let tab of active_links) {
-    if (tab.id != tabId) continue;
-
-    tab.name = info.title;
-    tab.url = info.url;
-  }
-
-  // Update workspace if applicable
-  let workspace = await getFromLocalStorage(currentWorkspace);
-  if (workspace == null) return;
-
-  workspace.active_links = active_links
-  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
-}
-
 try {
 
   // add listeners (isn't it obvious?)
@@ -224,14 +204,22 @@ try {
   chrome.tabs.onDetached.addListener(onTabRemoved);
   chrome.tabs.onCreated.addListener(onTabCreated);
   chrome.tabs.onUpdated.addListener(onTabUpdated);
-  chrome.tabs.onAttached.addListener(onTabAttached);
 
 } catch (e) {
   // wow! error is totally caught here.
   console.error(e);
 }
 
+
 const exampleChecklist = [{title: "Sevastopol", checked: true},{title: "Krakow", checked: true}];
+
+async function setTask(task) {
+  let workspace = await getFromLocalStorage(currentWorkspace);
+}
+
+async function removeTask(task) {
+
+}
 
 const workspaceBox = document.getElementById("yaw");
 
