@@ -9,11 +9,14 @@
   </head>
   <body>
     <div class="sidenav" id="yaw">
-    <div class="container">
-      <img src="./assets/plus-symbol-button.png" class="iconDetails">
-      <a margin-left="5">Add new</a>
-    </div>
-    <hr class="solidhr">
+      <div class="container">
+        <div id="addnew">
+          <img src="./assets/plus-symbol-button.png" class="iconDetails">
+          <a style="margin-top: 6px; margin-bottom: 3px;">Add new</a>
+        </div>
+        <input id="addnewtext" type="text" placeholder="Workspace Name" pattern="[A-Za-z]+" style="display: none; margin-left: 5px;">
+      </div>
+      <hr class="solidhr">
     </div>
     <div class="main">
       <div class="tab">
@@ -25,6 +28,6 @@
       <div id="linksp" class="tabcontent"></div>
       <div id="tasksp" class="tabcontent"></div>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

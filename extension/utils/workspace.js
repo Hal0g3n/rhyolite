@@ -1,4 +1,41 @@
-importScripts("./utils/util.js")
+// Jump to first page
+function jumpToHome() {
+    chrome.tabs.query({ currentWindow: true, index: 0 }, (tab) => {
+        chrome.tabs.update(tab[0].id, { active: true });
+    });
+}
+
+function closeOtherTabs() {
+    var home = chrome.tabs.query({ currentWindow: true, index: 0 });
+    chrome.tabs.query(
+        { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
+        function (otherTabs) {
+            for (const tab of otherTabs) if (home.id != tab.id)
+                chrome.tabs.remove(otherTabIds);
+
+            window.close();
+        }
+    );
+}
+
+// Opens the stored away tabs in the workspace
+function openSavedTabs(urls) {
+    urls.forEach((url) => 
+        chrome.tabs.create({
+            active: false,
+            url: url
+        })
+    );
+}
+
+
+// Creates the Home Tab (pinned) in the given window
+function createPinnedTab(id) {
+    chrome.tabs.create({ url: "./index.html", windowId: id, active: false, pinned: true }, (tab) => {
+        chrome.tabs.move(tab.id, { index: 0 });
+    })
+}
+
 class Workspace {
     active_tabs = [
         { id: "1034", name: "google", url: "https://www.google.com"}
@@ -14,7 +51,7 @@ class Workspace {
     }
 };
 
-function getFromLocalStorage(key) {
+export function getFromLocalStorage(key) {
     return new Promise(resolve => {
         chrome.storage.sync.get(key, function (item) {
             resolve(item[key]);
@@ -22,7 +59,7 @@ function getFromLocalStorage(key) {
     });
 }
 
-function setToLocalStorage(values) {
+export function setToLocalStorage(values) {
     return new Promise(resolve => {
         chrome.storage.sync.set(values, function () {
             if (chrome.runtime.lastError)
@@ -35,7 +72,7 @@ function setToLocalStorage(values) {
 let currentWorkspace = "";
 let workspaces = null;
 
-async function createWorkspace(name) {
+export async function createWorkspace(name) {
     if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
     if (!workspaces.includes(name)) return;
     
@@ -50,7 +87,7 @@ async function createWorkspace(name) {
     switchWorkspace(name);
 }
 
-async function switchWorkspace(next) {
+export async function switchWorkspace(next) {
     if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
     if (!workspaces.includes(next)) return;
     
@@ -72,7 +109,7 @@ async function switchWorkspace(next) {
     currentWorkspace = next;
 }
 
-async function deleteWorkspace(name) {
+export async function deleteWorkspace(name) {
     if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
     if (!workspaces.includes(name)) return;
 
@@ -90,7 +127,7 @@ async function deleteWorkspace(name) {
 }
 
 
-async function onTabCreated(tab) {
+export async function onTabCreated(tab) {
     let workspace = await getFromLocalStorage(currentWorkspace);
     workspace.active_links.push({
         id: tab.id,
@@ -101,7 +138,7 @@ async function onTabCreated(tab) {
     setToLocalStorage(currentWorkspace, workspace);
 }
 
-async function onTabRemoved(tabId, info) {
+export async function onTabRemoved(tabId, info) {
     let workspace = (await getFromLocalStorage(currentWorkspace)).filter(e => 
         e.id != tabId
     );
@@ -109,7 +146,7 @@ async function onTabRemoved(tabId, info) {
     setToLocalStorage(currentWorkspace, workspace);
 }
 
-async function onTabMoved(tabId, info) {
+export async function onTabMoved(tabId, info) {
     let workspace = await getFromLocalStorage(currentWorkspace);
     let moved = workspace.active_links[info.fromIndex];
     
@@ -119,7 +156,7 @@ async function onTabMoved(tabId, info) {
     setToLocalStorage(currentWorkspace, workspace);
 }
 
-async function onTabUpdated(tabId, info) {
+export async function onTabUpdated(tabId, info) {
     let workspace = await getFromLocalStorage(currentWorkspace);
     for (let tab of workspace.active_tabs) {
         if (tab.id != tabId) continue;
@@ -135,11 +172,11 @@ chrome.tabs.onDetached.addListner(onTabRemoved);
 chrome.tabs.onCreated.addListener(onTabCreated);
 chrome.tabs.onUpdated.addListener(onTabUpdated);
 
-function update() {
+export function update() {
 
 }
 
-function load_data() {
+export function load_data() {
     chrome.storage.onChanged.addListener(function (changes, namespace) {
         for (let [key, { old, value }] of Object.entries(changes)) {
             if (key === "data") {
@@ -154,16 +191,8 @@ function load_data() {
     });
 }
 
-function fuzzysearch() {
+export function fuzzysearch() {
 
     fuzzysort.go();
 
 }
-
-function main() {
-
-
-
-}
-
-window.addEventListener("load", main);
