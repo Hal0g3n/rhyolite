@@ -1,0 +1,29 @@
+{
+   "background": {
+      "page": "background.html"
+   },
+   "browser_action": {
+      "default_icon": "icon.png",
+      "default_popup": "popup.html",
+      "default_title": "Commander"
+   },
+   "commands": {
+      "_execute_browser_action": {
+         "suggested_key": {
+            "chromeos": "Ctrl+Y",
+            "linux": "Ctrl+Y",
+            "mac": "Command+J",
+            "windows": "Ctrl+Y"
+         }
+      }
+   },
+   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+   "description": "Command palette for Chrome.",
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApkaONxa/ZgOArvDEcskMzLt4YSiG6PUT5nInOr9bWQ59K7MQV0knRXssNo7VMN8HtQnDMhCEibbAyeRHcrQJPDF04Zxq36yO23CC58RsTwBsP2ZXYARTmLizNTl5KvD2EzhvCGzJ4jgQ+Q0MDOHG1ayjlClIKVmsNrcEZeJCNSoqz1dW4licv1SCFwORxRh1PKHuQ3Tcgj7hY2jVWTo8hesNdRH8sYuMMgkcvzgkUcAElQaSK8aka+o/U2vGwzDkj4I39Fn6ylYw9ja2kT+RRD4RRjf/nK4ynInronFYLYJPGV3fXmYZedH/FuNq/2/GO5D4Wq5m6avojd/ghqFwhwIDAQAB",
+   "manifest_version": 2,
+   "name": "Commander",
+   "options_page": "options.html",
+   "permissions": [ "tabs", "storage" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.3.2"
+}
