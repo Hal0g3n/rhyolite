@@ -45,9 +45,9 @@ async function createWorkspace(name) {
     }});
     
     // Add to array and update storage
-    workspaces.push(name)
-    setToLocalStorage({workspaces: workspaces})
-    switchWorkspace(name)
+    workspaces.push(name);
+    setToLocalStorage({workspaces: workspaces});
+    switchWorkspace(name);
 }
 
 async function switchWorkspace(next) {
@@ -68,17 +68,17 @@ async function switchWorkspace(next) {
     );
     
     // Get active links to open
-    openSavedTabs((await getFromLocalStorage(next)).active_links)
+    openSavedTabs((await getFromLocalStorage(next)).active_links);
     currentWorkspace = next;
 }
 
 async function deleteWorkspace(name) {
-    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces")
+    if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
     if (!workspaces.includes(name)) return;
 
     // remove from array and update storage
-    workspaces = workspaces.filter(e => e != name)
-    setToLocalStorage({ workspaces: workspaces })
+    workspaces = workspaces.filter(e => e != name);
+    setToLocalStorage({ workspaces: workspaces });
     chrome.storage.sync.remove(name);
 
     // Switch out if necessary
@@ -91,14 +91,14 @@ async function deleteWorkspace(name) {
 
 
 async function onTabCreated(tab) {
-    let workspace = await getFromLocalStorage(currentWorkspace)
+    let workspace = await getFromLocalStorage(currentWorkspace);
     workspace.active_links.push({
         id: tab.id,
         name: tab.title,
         url: tab.url
-    })
+    });
 
-    setToLocalStorage(currentWorkspace, workspace)
+    setToLocalStorage(currentWorkspace, workspace);
 }
 
 async function onTabRemoved(tabId, info) {
@@ -106,25 +106,25 @@ async function onTabRemoved(tabId, info) {
         e.id != tabId
     );
 
-    setToLocalStorage(currentWorkspace, workspace)
+    setToLocalStorage(currentWorkspace, workspace);
 }
 
 async function onTabMoved(tabId, info) {
-    let workspace = await getFromLocalStorage(currentWorkspace)
-    let moved = workspace.active_links[info.fromIndex]
+    let workspace = await getFromLocalStorage(currentWorkspace);
+    let moved = workspace.active_links[info.fromIndex];
     
-    workspace = workspace.filter(e, ind => ind != info.fromIndex)
+    workspace = workspace.filter(e, ind => ind != info.fromIndex);
     workspace.splice(info.toIndex, 0, moved);
     
-    setToLocalStorage(currentWorkspace, workspace)
+    setToLocalStorage(currentWorkspace, workspace);
 }
 
 async function onTabUpdated(tabId, info) {
-    let workspace = await getFromLocalStorage(currentWorkspace)
+    let workspace = await getFromLocalStorage(currentWorkspace);
     for (let tab of workspace.active_tabs) {
         if (tab.id != tabId) continue;
 
-        tab.name = info.title
+        tab.name = info.title;
         tab.url = info.url;
     }
 }
@@ -156,7 +156,7 @@ function load_data() {
 
 function fuzzysearch() {
 
-    fuzzysort.go()
+    fuzzysort.go();
 
 }
 

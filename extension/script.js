@@ -8,11 +8,11 @@ try {
   // wow! error is caught here.
 }
 
-const exampleW = [{
+const exampleWorkspaces = [{
   name: "Sus domesticus"
 }];
 
-const exampleT = [
+const exampleTabs = [
   {
     url: "https://www.youtube.com/watch?v=uzX6Mu-sCfA&t=10s",
     title: "chill"
@@ -26,7 +26,7 @@ const tabsp = document.getElementById("tabsp");
 const workspaceBox = document.getElementById("yaw");
 
 // replace exampleW
-exampleW.forEach((workspace) => {
+exampleWorkspaces.forEach((workspace) => {
   const workspace_item = document.createElement("a");
   workspace_item.innerHTML = workspace.name;
   workspaceBox.appendChild(workspace_item);
@@ -46,7 +46,7 @@ function openTab(evt, tab) {
   evt.currentTarget.className += " active";
 }
 
-exampleT.forEach((ob) => {
+exampleTabs.forEach((ob) => {
   const tabDiv = document.createElement("div");
   tabDiv.className = "tabContainer";
   const { origin } = new URL(ob.url);
