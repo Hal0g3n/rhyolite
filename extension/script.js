@@ -215,7 +215,6 @@ const exampleWorkspaces = [{
 }];
 const exampleChecklist = [{title: "Sevastopol", checked: true},{title: "Krakow", checked: true}];
 
-const tabsp = document.getElementById("tabsp");
 const workspaceBox = document.getElementById("yaw");
 const exampleTabs = [
   {
@@ -226,8 +225,6 @@ const exampleTabs = [
     title: "chill"
   }
 ];
-
-const tasksp = document.getElementById("tasksp");
 
 async function generate_workspaces() {
   workspaces = await getFromLocalStorage("workspaces");
@@ -252,18 +249,43 @@ async function generate_workspaces() {
   });
 }
 
-function generate_everything() {
-  generate_workspaces();
+async function generate_tabs() {
+  let links = active_links;
+  if (currentWorkspace != null) {
+    const a = await getFromLocalStorage(currentWorkspace);
+    if (a != null) {
+      links = a.active_links;
+    }
+  }
+  const tabsp = document.getElementById("tabsp");
+
+  tabsp.textContent = ``;
+
+  links.forEach((link) => {
+    const tab_container = document.createElement("div");
+    tab_container.className = "tabContainer";
+    const { origin } = new URL(link.url);
+    tab_container.innerHTML = `
+      <img class="tabPaneImg" src="${origin}/favicon.ico">
+      <div class="tabDiv">
+      <p class="tabTitle">${link.name}</p>
+      <p class="tabLink">${link.url}</p>
+      </div>
+    `;
+    // onerror="this.onerror=null;this.src='assets/chrome.png';"
+    tabsp.appendChild(tab_container);
+  });
+
 }
 
-// `try` to generate
+async function generate_everything() {
+  await generate_workspaces();
+  await generate_tabs();
+}
+
+// `try` to generate everything
 try {
-  generate_workspaces(await getFromLocalStorage("workspaces") || []);
-  /*
-  // don't delete workspace
-  // const workspaces = await getFromLocalStorage("workspaces");
-  // workspaces.forEach(w => deleteWorkspace(w));
-  */
+  generate_everything();
 } catch (e) {
   console.error(e);
 }
@@ -292,26 +314,6 @@ function do_tabpane() {
 
 }
 do_tabpane();
-
-function do_tabs() {
-
-  exampleTabs.forEach((ob) => {
-    const tabsp = document.getElementById("tabsp");
-    const tabDiv = document.createElement("div");
-    tabDiv.className = "tabContainer";
-    const { origin } = new URL(ob.url);
-    tabDiv.innerHTML = `
-      <img class="tabPaneImg" src="${origin}/favicon.ico">
-      <div class="tabDiv">
-      <p class="tabTitle">${ob.title}</p>
-      <p class="tabLink">${ob.url}</p>
-      </div>
-    `;
-    tabsp.appendChild(tabDiv);
-  });
-
-}
-do_tabs();
 
 function do_checklist() {
   const tasksp = document.getElementById("tasksp");
@@ -376,6 +378,8 @@ function do_storagelistener() {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "workspaces") {
         generate_workspaces();
+      } else if (key === currentWorkspace) {
+        generate_tabs();
       }
     }
   });
