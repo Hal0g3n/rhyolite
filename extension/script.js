@@ -63,10 +63,6 @@ function setToLocalStorage(values) {
 
 let currentWorkspace = null;
 let workspaces = null;
-let active_links = ((await chrome.tabs.query({})).map(
-  e => ({id: e.id, name: e.title, url: e.url})
-));
-active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
 
 async function createWorkspace(name) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
@@ -105,6 +101,9 @@ async function switchWorkspace(next) {
   // Set active links to open
   const a = (await getFromLocalStorage(next));
   active_links = a.active_links;
+
+  // Set checklist
+  checkList = a.tasks
   
   // Get active links to open
   openSavedTabs(active_links);
@@ -130,6 +129,13 @@ async function deleteWorkspace(name) {
   if (workspaces.length == 0) currentWorkspace = null;
   else switchWorkspace(workspaces[0]);
 }
+
+
+/** <Links Page> **/
+let active_links = ((await chrome.tabs.query({})).map(
+  e => ({ id: e.id, name: e.title, url: e.url })
+));
+active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
 
 async function onTabCreated(tab) {
   if (tab.url.includes("chrome-extension://")) return;
@@ -210,18 +216,29 @@ try {
   console.error(e);
 }
 
-const exampleChecklist = [{title: "Sevastopol", checked: true},{title: "Krakow", checked: true}];
+/** <Tasks Page> **/
+const checkList = [];
+async function newTask(event) {
+  if (event.key != "Enter") return;
+  
+  if (currentWorkspace == null) return;
+  let workspace = await getFromLocalStorage(currentWorkspace);
+  
+  let task = event.value;
+  workspace.tasks.push({task: task, checked: false});
+  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+}
 
-async function setTask(task, val) {
-  if (currentWorkspace == "") return;
+async function setTask(task, checked) {
+  if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
 
-  workspace.tasks[task] = val;
-  await setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  workspace.tasks[task] = checked;
+  await setToLocalStorage({[`${currentWorkspace}`]: workspace})
 }
 
 async function removeTask(task) {
-  if (currentWorkspace == "") return;
+  if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
 
   delete workspace.tasks[task];
@@ -331,14 +348,22 @@ do_tabpane();
 
 function do_checklist() {
   const tasksp = document.getElementById("tasksp");
-  for (let i = 0; i < exampleChecklist.length; i++) {
+
+  for (const task of checkList) {
     const tabDiv = document.createElement("div");
     tabDiv.innerHTML = `
-      <input type="checkbox" class="checkbox1" name="c${i}" checked="${exampleChecklist[i].checked}">
-      <label class="checklist1Label" for="c${i}">${exampleChecklist[i].title}</label><br>
-    `;
+      <i type="checkbox" class="checkbox1" name="c${i}" checked="${task.checked}">
+      <input type="text" class="addTask" onkeydown="newTask(this)"/>
+    `; 
     tasksp.appendChild(tabDiv);
   }
+
+  const addTaskDiv = document.createElement("div");
+  addTaskDiv.innerHTML = `
+      <i class="material-icons">add</i>
+      <input class="addTask"></input>
+    `;
+
   const t = document.getElementsByClassName("");
   for (let i = 0; i < t.length; i++){
     t[i].addEventListener('change', function() {
