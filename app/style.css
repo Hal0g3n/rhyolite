@@ -1,25 +1,45 @@
+:root{
+  --bg:   #171718;
+  
+  --t1: #00B388;
+  --c1: #CB3D6E;
+  --c2: #5D437E;
+}
+body{
+  background: var(--bg);
+}
 .sidenav {
     height: 100%;
-    width: 160px;
+    width: 256px;
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #111;
+    background-color: var(--bg);
     overflow-x: hidden;
     padding-top: 20px;
+    border-color: var(--t1);
+    border-right-width: 3px;
+    border-right-style: solid;  
   }
   
   .sidenav a {
     padding: 6px 8px 6px 16px;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+  }
+  .sidenav div a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 18px;
     color: #818181;
     display: block;
   }
   
   .sidenav a:hover {
-    color: #f1f1f1;
+    color: var(--t1);
   }
   
   .main {
@@ -42,19 +62,72 @@
     height:40px;
     width:40px;
 }
-.container2 {
+.container {
     width:100%;
     height:auto;
     padding:1%;
 }
-.text {
-    float:left;
+.container img {
+  position: relative;
+  top: 50%;
+  transform: translateY(50%);
+  max-width:16px;
+  max-height:16px;
+  width: auto;
+  height: auto;
 }
-.text h4, .text p {
-    width:100%;
-    float:left;
-    font-size:0.6em;
+.solidhr {
+  border-top: 3px solid var(--t1);
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
-.text p span {
-    color:#666;
+.main{
+  margin-left: 256px;
+}
+.tab button {
+  background-color: var(--t1);
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+  
+}
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: var(--c1);
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: var(--c2);
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  /* border: 1px solid #ccc; */
+  border-top: 28px;
+  width: 512px;
+  margin-top: 48px;
+}
+.tabOpenTab p{
+  color: #bbb;
+  font-size: 8px;
+}
+.tabTitle {
+  font-size: 10px;
+  color: #DDD;
+}
+.tabOpenTab{
+  position: relative;
+  top: 50%;
+  transform: translateY(50%);
+  max-width:16px;
+  max-height:16px;
+  width: inherit
+ 
 }
