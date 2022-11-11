@@ -12,7 +12,7 @@ const exampleT = [{
 const tabsp = document.getElementById("tabsp");
 const workspaceBox = document.getElementById("yaw");
 
-//replace exampleW
+// replace exampleW
 exampleW.forEach((workspace) => {
     const witem = document.createElement("a");
     witem.innerHTML = workspace.name;
@@ -38,8 +38,10 @@ exampleT.forEach((ob) => {
   tabDiv.className = "tabContainer";
   tabDiv.innerHTML = `
   <img class="tabPaneImg" src="${ob.favicon}">
+  <div class="tabDiv">
   <p class="tabTitle">${ob.title}</p>
   <p class="tabLink">${ob.link}</p>
+  </div>
   `;
   tabsp.appendChild(tabDiv);
 });
