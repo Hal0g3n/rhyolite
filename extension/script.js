@@ -1,6 +1,6 @@
 
 const exampleW = [{
-    name: "glong"
+  name: "glong"
 }];
 
 const exampleT = [{
@@ -33,7 +33,7 @@ function openTab(evt, tab) {
   evt.currentTarget.className += " active";
 }
 
-exampleT.forEach((ob)=>{
+exampleT.forEach((ob) => {
   const tabDiv = document.createElement("div");
   tabDiv.className = "tabOpenTab";
   tabDiv.innerHTML = `
