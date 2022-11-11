@@ -1,4 +1,9 @@
-importScripts("./utils/util.js");
+// Creates the Home Tab (pinned) in the given window
+function createPinnedTab(id) {
+    chrome.tabs.create({ url: "./index.html", windowId: id, active: false, pinned: true }, (tab) => {
+        chrome.tabs.move(tab.id, { index: 0 });
+    })
+}
 
 // Shortcut Command Listener
 chrome.commands.onCommand.addListener(function (command) {
