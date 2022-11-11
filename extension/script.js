@@ -288,7 +288,7 @@ async function generate_tabs() {
   }
   */
   const tabsp = document.getElementById("tabsp");
-
+  const notesp = document.getElementById("notesp");
   tabsp.textContent = ``;
 
   links.forEach((link) => {
@@ -366,6 +366,10 @@ function do_checklist() {
     `; 
     tasksp.appendChild(tabDiv);
   }
+  
+  notesp.innerHTML = `<div id="mdArea"></div>
+  <div id="mdEditor"></div>
+  `
 
   const addTaskDiv = document.createElement("div");
   addTaskDiv.innerHTML = `
