@@ -3,6 +3,9 @@
    "name": "Rhyolite",
    "description": "What is this",
    "version": "1.00",
+   "background": {
+      "service_worker": "background.js"
+   },
    "permissions": ["storage", "activeTab", "scripting", "tabs"],
    "action": {
       "default_popup": "popup.html",
@@ -29,8 +32,10 @@
    "commands": {
       "Jump to Home": {
          "suggested_key": {
-            "default": "Ctrl+Space",
-            "mac": "Command+Space"
+            "chromeos": "Ctrl+Space",
+            "linux": "Ctrl+Space",
+            "mac": "Command+Space",
+            "windows": "Ctrl+Space"
          },
          "description": "Jumps to the Home page"
       }
