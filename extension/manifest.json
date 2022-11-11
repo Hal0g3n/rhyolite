@@ -32,10 +32,8 @@
    "commands": {
       "Jump to Home": {
          "suggested_key": {
-            "chromeos": "Ctrl+Space",
-            "linux": "Ctrl+Space",
-            "mac": "Command+Space",
-            "windows": "Ctrl+Space"
+            "default": "Ctrl+Space",
+            "mac": "Command+Space"
          },
          "description": "Jumps to the Home page"
       }

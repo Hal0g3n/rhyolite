@@ -4,3 +4,21 @@ function closeOtherTabs() {
         chrome.tabs.remove(otherTabIds); window.close();
     });
 }
+
+function openTab() {
+    chrome.tabs.create({url: 'index.html'});
+}
+
+function jumpToHome() {
+    chrome.tab.highlight()
+}
+
+chrome.commands.onCommand.addListener(function (command) {
+    switch (command) {
+        case 'Jump to Home':
+            jumpToHome();
+            break;
+        default:
+            console.log(`Command ${command} not found`);
+    }
+});
