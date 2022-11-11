@@ -6,7 +6,7 @@
    "background": {
       "service_worker": "background.js"
    },
-   "permissions": ["storage", "activeTab", "scripting", "tabs", "contextMenu"],
+   "permissions": ["storage", "activeTab", "scripting", "tabs", "contextMenus"],
    "action": {
       "default_popup": "popup.html",
       "default_title": "Rhyolite",
