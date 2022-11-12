@@ -5,6 +5,7 @@
 
     display: var(--toggleDisplay, inline-flex);
     position: relative;
+    width: calc(100% - 30px);
 }
 
 .toggle__input {

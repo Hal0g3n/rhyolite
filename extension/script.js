@@ -257,14 +257,15 @@ async function newTask(task) {
 
 async function setTask(task, checked) {
   checkList[task] = checked;
-
+  
   // Update workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
-
+  
   workspace.tasks = checkList;
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
   await do_checklist();
+  console.log(task, await getFromLocalStorage(currentWorkspace));
 }
 
 async function removeTask(task) {
@@ -404,9 +405,13 @@ async function do_checklist() {
     tabDiv.style["margin"] = "10px"
 
     tabDiv.innerHTML = `
-      <input type="checkbox" class="toggle__input" name="c${i}" checked="${checkList[task]}" onclick="setTask(${task}, this)"/>
+      <input type="checkbox" class="toggle__input" name="c${i}" ${checkList[task] ? "checked" : ""}/>
       <label class="toggle__label" for="c${i}"><span class="toggle__text">${task}</span></label><br>
     `;
+
+    console.log(tabDiv.innerHTML);
+
+    tabDiv.firstElementChild.addEventListener("change", () => setTask(task, tabDiv.firstElementChild.checked));
 
     tasksp.appendChild(tabDiv);
   });
