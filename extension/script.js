@@ -348,7 +348,7 @@ async function generate_workspaces() {
     if (currentWorkspace === workspace_name) {
       workspace_item.classList.add("currentWorkspace");      
     }
-    workspace_item.addEventListener("click", async function(event) {
+    workspace_item.addEventListener("click", async function() {
       currentWorkspace = workspace_name;
       closeOtherTabs();
       openSavedTabs((await getFromLocalStorage(workspace_name)).active_links);
@@ -391,13 +391,31 @@ async function generate_tabs() {
     tab_div.innerHTML = `
     <p class="tabTitle">${link.name}</p>
       <p class="tabLink">${link.url}</p>
-      `;
-      tab_container.appendChild(tab_div);
-      tab_container.className = "tabContainer";
-      tab_container.style.cursor = "pointer";
-      tab_container.addEventListener("click", function(event) {
+    `;
+    tab_container.appendChild(tab_div);
+    tab_container.className = "tabContainer";
+    tab_container.style.cursor = "pointer";
+
+    tab_container.addEventListener("click", function() {
+      console.log("Going to tab")
       chrome.tabs.update(link.id, {selected: true});
     });
+    
+    const delBtn = document.createElement("img")
+    delBtn.src = "./images/wrong.svg";
+    delBtn.addEventListener("click", (e) => {
+      console.log("Remove")
+      chrome.tabs.remove(link.id)
+      e.stopPropagation()
+      return false;
+    });
+    delBtn.style["height"] = "25px"
+    delBtn.style["aspect-ratio"] = '1';
+    delBtn.style["float"] = "right";
+    delBtn.style["z-index"] = "2";
+
+    tab_container.appendChild(delBtn);
+
     tabsp.appendChild(tab_container);
   });
 
