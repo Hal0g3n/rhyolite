@@ -539,19 +539,18 @@ async function do_notes() {
   
   const notesp = document.createElement("div");
   document.getElementById("notesp").textContent = "";
-  notesp.style["display"] = "grid"
-  notesp.style["grid-template-cols"] = "repeat(2, 50%)"
 
   document.getElementById("notesp").appendChild(notesp)
   
   Object.keys(notes).forEach((note, i) => {
     const noteDiv = document.createElement("div");
+    noteDiv.style["display"] = "inline-block";
     noteDiv.className = "tabContainer";
     noteDiv.classList.add("mTab")
     noteDiv.style["margin"] = "10px";
 
     const title = document.createElement("h2")
-    title.innerHTML = `<input value = ${note}/>`
+    title.innerHTML = `<input value = ${note} />`
     noteDiv.appendChild(title);
     
     const content = document.createElement("textarea")

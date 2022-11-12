@@ -248,14 +248,16 @@ input:valid ~ label {
   background-color: var(--c2);
   margin-right: 5px;
   resize: none;
-  width: 384px;
-  height: 192px;
-  color: var(--c1);
-  font-weight: bold;
+  width: 95%;
+  height: 20vh;
+  color: #fff;
 }
 .sava{
     margin-left: 5px;
     margin-bottom: 2px;
     filter: invert(48%) brightness(118%) contrast(119%);
+}
 
+.mTab {
+  min-width: 45%;
 }
