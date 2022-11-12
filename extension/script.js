@@ -99,7 +99,8 @@ async function createWorkspace(name) {
     [`${name}`]: {
       active_links: active_links,
       stored_tabs: {},
-      tasks: {}
+      tasks: {},
+      notes: {}
     }
   });
 
@@ -130,12 +131,12 @@ async function switchWorkspace(next) {
   active_links = a.active_links;
   // set the checklist
   checkList = a.tasks;
+  // set the notes
+  notes = a.notes;
 
   // get active links to open
   openSavedTabs(active_links);
-  await generate_everything();
-
-  
+  await generate_everything(); 
 }
 
 async function deleteWorkspace(name) {
@@ -145,13 +146,13 @@ async function deleteWorkspace(name) {
   }
   if (!workspaces.includes(name)) return;
 
-  // remove from array and update storage
   workspaces = workspaces.filter(e => e != name);
   await setToLocalStorage({ workspaces: workspaces });
   await deleteFromLocalStorage(name);
 
   active_links = [];
-  checkList = [];
+  checkList = {};
+  notes = {}
 
   // Switch out if necessary
   if (currentWorkspace != name) return;
@@ -287,6 +288,48 @@ async function removeTask(task) {
   workspace.tasks = checkList;
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
   await do_checklist();
+}
+
+
+
+/** <Notes Page> **/
+let notes = {}
+async function newNote(note) {
+  if (!note.replace(/\s/g, '').length) return;
+  checkList[note] = "";
+
+  // Update workspace as necessary
+  if (currentWorkspace == null) return;
+  let workspace = await getFromLocalStorage(currentWorkspace);
+
+  workspace.notes = notes;
+
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  await do_notes();
+}
+
+async function setNote(note, content) {
+  notes[note] = content;
+
+  // Update workspace as necessary
+  if (currentWorkspace == null) return;
+  let workspace = await getFromLocalStorage(currentWorkspace);
+
+  workspace.notes = notes;
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  await do_notes();
+}
+
+async function removeNote(note) {
+  delete notes[note];
+
+  // Update workspace as necessary
+  if (currentWorkspace == null) return;
+  let workspace = await getFromLocalStorage(currentWorkspace);
+
+  workspace.notes = notes;
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  await do_notes();
 }
 
 const workspaceBox = document.getElementById("yaw");
@@ -430,6 +473,10 @@ async function do_checklist() {
     tabDiv.appendChild(delBtn);
     tasksp.appendChild(tabDiv);
   });
+
+  function do_notes() {
+
+  }
   
   /*
   // what is this
