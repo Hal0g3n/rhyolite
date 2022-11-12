@@ -165,6 +165,7 @@ async function deleteWorkspace(name) {
 }
 
 async function onTabCreated(tab) {
+  console.log(currentWorkspace);
   if (tab == null || tab.url == null) return;
   if (tab.url.includes("chrome-extension://")) return;
   if (tab.url.includes(chrome.runtime.id)) return;
@@ -633,7 +634,6 @@ function do_storagelistener() {
       if (key === "workspaces") {
         generate_workspaces();
       } else if (key === currentWorkspace) {
-        console.log("update");
         generate_tabs();
         do_checklist();
       }
