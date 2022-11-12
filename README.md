@@ -1,9 +1,13 @@
 # rhyolite
 ----
 
+----
 
+----
 
+----
 
+----
 
 ⚠️ disclaimer ⚠️
 this extension was created for the power users
@@ -18,24 +22,25 @@ AAA     AAA   MMM             MMM     OOOOOOO     NNN    NNNNN     GGGGGGGG     
 !!!
 
 ## Inspiration
-We looked at some of our friends computers and having more than twenty tabs open at once making the computer laggy and also making work inefficient as he often have to navigate through them
+We looked at some of our friends' computers and having more than 40 tabs open at once, making the computer very laggy and making work inefficient, as navigation through the tabs is not nice.
 
 ## What it does
-Rhyolite groups tabs together, managing the amount of total tabs you have on screen at any one time.
+Rhyolite groups tabs together and only keeps open one group at a time, managing the amount of total tabs you have on screen at any one time.
 
 ## How we built it
-Using a chrome extension, we used mainly javascript
+We used JavaScript, HTML and CSS to make a chromium browser extension.
 
 ## Challenges we ran into
-It was also a difficulty trying to stay up and completing the project in such a limited amount of time that is given overnight.
-The way extensions are coded makes it difficult to store and update data resulting in a large chain of bugs that took a long time to debug
+It was also a difficulty trying to stay up and completing the project in such a limited amount of time (overnight, 23½ hours)
+The way chromium extensions are coded makes it not very nice to store and update data, resulting in an undesirablly long chain of bugs.
 
 ## Accomplishments that we're proud of
-We Delivered all of the features we wanted to put in our final product and also add some extra features
+We delivered all of the features we wanted to put in our final product, and also added some extra features!
 
 ## What we learned
-We learnt how javascript worked in the field of developing browser extensions and the possibility it has to increase productivity
+We learnt how to develop browser extensions! We also realised the possibilities that browser extensions could increase productivity.
+
 ## What's next for Rhyolite
 A system to organize workspaces and pin certain workspaces at the top
-A way to customize the CSS for the extension to allow the use of other designs.
-Having a profile system for further organization of workspaces
+A way to customize the CSS for the extension to allow the use of other designs. (a bit done)
+Having a profile system for further organization of workspaces.
