@@ -9,8 +9,7 @@
 }
 
 :root {
-  --bg:   #171718;
-  
+  --bg: #171718;
   --t1: #00B388;
   --c1: #CB3D6E;
   --c2: #5D437E;
@@ -244,6 +243,7 @@ input:valid ~ label {
   height: 100%;
   z-index: -2;
 }
+
 .tabContainer textArea {
   background-color: var(--c2);
   margin-right: 5px;
@@ -252,10 +252,11 @@ input:valid ~ label {
   height: 20vh;
   color: #fff;
 }
-.sava{
-    margin-left: 5px;
-    margin-bottom: 2px;
-    filter: invert(48%) brightness(118%) contrast(119%);
+
+.sava {
+  margin-left: 5px;
+  margin-bottom: 2px;
+  filter: invert(48%) brightness(118%) contrast(119%);
 }
 
 .mTab {

@@ -433,6 +433,7 @@ async function generate_tabs() {
       work(links);
       return;
     }
+    // do fuzzy search
     work(fuzzysort.go(val, links, { key: "name", }));
   });
 
