@@ -106,14 +106,22 @@ body {
   margin-bottom: 12px;
 }
 
+.tabhr {
+  border-top: 3px solid var(--t1);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
 .main {
-  margin-left: 256px;
+  margin-left: 248px;
 }
 
 .tabrow {
   overflow: hidden;
   background-color: transparent;
-  padding-top: 6px;
+  padding-top: 18px;
+  text-align: center;
 }
 
 .tabrow button {
@@ -209,4 +217,11 @@ input:valid ~ label {
   top: -14px;
   font-size: 12px;
   color: var(--c2);
+}
+
+.ko {
+  position: absolute;
+  color: white;
+  right: 6px;
+  bottom: 6px;
 }
