@@ -244,4 +244,7 @@ input:valid ~ label {
   height: 100%;
   z-index: -2;
 }
-/* .tabContainer{} */
+.tabContainer textArea {
+  background-color: gray;
+  
+}
