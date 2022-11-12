@@ -15,7 +15,7 @@ AAAAAAAAAAA   MMM      M      MMM   OOO     OOO   NNN  NNN NNN   GGG  GG  GGG   
 AAA     AAA   MMM             MMM    OOO   OOO    NNN   NNNNNN    GGG    GGG        UUU  UUU     SS     SSS
 AAA     AAA   MMM             MMM     OOOOOOO     NNN    NNNNN     GGGGGGGG          UUUUUU       SSSSSSSS
 ```
-. if you are not among us, please go away.
+!!!
 
 ## Inspiration
 We looked at some of our friends computers and having more than twenty tabs open at once making the computer laggy and also making work inefficient as he often have to navigate through them
