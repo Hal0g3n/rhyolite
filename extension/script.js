@@ -399,9 +399,12 @@ async function do_checklist() {
 
   Object.keys(checkList).forEach((task, i) => {
     const tabDiv = document.createElement("div");
+    tabDiv.className = "toggle"
+    tabDiv.style["margin"] = "10px"
+
     tabDiv.innerHTML = `
-      <input type="checkbox" class="_checkbox" name="c${i}" checked="${checkList[task]}" onclick="setTask(${task}, this)"/>
-      <label class="checklist1Label" for="c${i}">${task}</label><br>
+      <input type="checkbox" class="toggle__input" name="c${i}" checked="${checkList[task]}" onclick="setTask(${task}, this)"/>
+      <label class="toggle__label" for="c${i}"><span class="toggle__text">${task}</span></label><br>
     `;
 
     tasksp.appendChild(tabDiv);
