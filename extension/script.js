@@ -389,7 +389,7 @@ async function generate_tabs() {
     tab_div.classList.add("tabDiv");
     tab_div.innerHTML = `
       <p class="tabTitle">${link.name}</p>
-      <p class="tabLink">${limitchars(link.url, 100)}</p>
+      <p class="tabLink">${link.url}</p>
     `;
     tab_container.appendChild(tab_div);
     tab_container.className = "tabContainer";
