@@ -507,6 +507,7 @@ async function do_notes() {
   Object.keys(notes).forEach((note, i) => {
     const noteDiv = document.createElement("div");
     noteDiv.className = "tabContainer";
+    noteDiv.classList.add("mTab")
     noteDiv.style["margin"] = "10px";
 
     const title = document.createElement("h2")
