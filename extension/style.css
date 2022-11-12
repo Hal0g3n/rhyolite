@@ -245,8 +245,13 @@ input:valid ~ label {
   z-index: -2;
 }
 .tabContainer textArea {
-  background-color: darkblue;
+  background-color: var(--c2);
   margin-right: 5px;
+  resize: none;
+  width: 384px;
+  height: 192px;
+  color: var(--c1);
+  font-weight: bold;
 }
 .sava{
     margin-left: 5px;
