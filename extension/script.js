@@ -127,7 +127,7 @@ async function switchWorkspace(next) {
   openSavedTabs(active_links);
   await generate_everything();
 
-  console.log(a, active_links, checkList);
+  
 }
 
 async function deleteWorkspace(name) {
@@ -243,6 +243,7 @@ try {
 /** <Tasks Page> **/
 let checkList = {};
 async function newTask(task) {
+  if (!task.replace(/\s/g, '').length) return;
   checkList[task] = false;
   
   // Update workspace as necessary
@@ -250,7 +251,7 @@ async function newTask(task) {
   let workspace = await getFromLocalStorage(currentWorkspace);
   
   workspace.tasks = checkList;
-  console.log(workspace);
+  
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
   await do_checklist();
 }
@@ -265,7 +266,7 @@ async function setTask(task, checked) {
   workspace.tasks = checkList;
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
   await do_checklist();
-  console.log(task, await getFromLocalStorage(currentWorkspace));
+  
 }
 
 async function removeTask(task) {
@@ -393,7 +394,7 @@ async function do_checklist() {
   /*
   const a = await getFromLocalStorage(currentWorkspace);
   checkList = a.tasks;
-  console.log(a);
+  
   */
 
   const tasksp = document.getElementById("tasksp");
@@ -409,10 +410,16 @@ async function do_checklist() {
       <label class="toggle__label" for="c${i}"><span class="toggle__text">${task}</span></label><br>
     `;
 
-    console.log(tabDiv.innerHTML);
+    
 
     tabDiv.firstElementChild.addEventListener("change", () => setTask(task, tabDiv.firstElementChild.checked));
 
+    const delBtn = document.createElement("img");
+    delBtn.src = "./images/icons8-trash-can.svg"
+    delBtn.style["height"] = "30px";
+    delBtn.style["margin-left"] = "auto";
+    delBtn.addEventListener("click", () => removeTask(task));
+    tabDiv.appendChild(delBtn);
     tasksp.appendChild(tabDiv);
   });
   
@@ -425,20 +432,26 @@ async function do_checklist() {
   `;
   */
 
-  const addTaskDiv = document.createElement("div");
-  addTaskDiv.innerHTML = `
-    <img src="./assets/plus-symbol-button.png" class="iconDetails" style="width: 16px; height: auto; margin: 16px 0;">
-  `;
-
-  const inp = document.createElement("input");
-  inp.className = "addTask";
-  inp.addEventListener("keyup", event => {
+ 
+ const inp = document.createElement("input");
+ inp.className = "addTask";
+ inp.addEventListener("keyup", event => {
     if (event.code !== "Enter") return;
     newTask(inp.value);
     event.preventDefault();
   });
   
+  const addBtn = document.createElement("img")
+  addBtn.src="./assets/plus-symbol-button.png"
+  addBtn.class="iconDetails";
+  addBtn.style["aspect-ratio"] = 1
+  addBtn.style["margin"] = "16px 0";
+  addBtn.addEventListener("click", () => newTask(inp.value));
+  
+  const addTaskDiv = document.createElement("div");
+  addTaskDiv.style["display"] = 'flex';
   addTaskDiv.appendChild(inp);
+  addTaskDiv.appendChild(addBtn);
   tasksp.append(addTaskDiv);
 
   const t = document.getElementsByClassName("");
@@ -515,9 +528,9 @@ do_storagelistener();
 async function test() {
   for (let i = 0; i < 100; i++) {
     await setToLocalStorage({_amogus: { amogus: "among us" + i }});
-    console.log((await getFromLocalStorage("_amogus")).amogus);
+    
   }
-  console.log((await getFromLocalStorage("a")));
+  
 }
 test();
 */
@@ -526,7 +539,7 @@ test();
 // remnants of nth debugging session
 async function test2() {
   await setToLocalStorage({_amogus: { tasks: { amogus: true }}});
-  console.log(await getFromLocalStorage("_amogus"))
+  
 }
 test2();
 */
