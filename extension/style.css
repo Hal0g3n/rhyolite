@@ -244,4 +244,13 @@ input:valid ~ label {
   height: 100%;
   z-index: -2;
 }
-/* .tabContainer{} */
+.tabContainer textArea {
+  background-color: darkblue;
+  margin-right: 5px;
+}
+.sava{
+    margin-left: 5px;
+    margin-bottom: 2px;
+    filter: invert(48%) brightness(118%) contrast(119%);
+
+}

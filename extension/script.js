@@ -547,7 +547,8 @@ async function do_notes() {
     noteDiv.appendChild(content);
 
     const savBtn = document.createElement("img")
-    savBtn.src = "./images/icons8-trash-can.svg";
+    savBtn.src = "./images/save-svgrepo-com.svg";
+    savBtn.classList.add("sava")
     savBtn.style["height"] = "30px";
     savBtn.style["margin-left"] = "auto";
     savBtn.addEventListener("click", () => setNote(note, content.value));
