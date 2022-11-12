@@ -314,7 +314,6 @@ async function generate_tabs() {
   }
   */
   const tabsp = document.getElementById("tabsp");
-  const notesp = document.getElementById("notesp");
   tabsp.textContent = ``;
 
   links.forEach((link) => {
@@ -410,10 +409,14 @@ async function do_checklist() {
     tasksp.appendChild(tabDiv);
   });
   
+  /*
+  // what is this
+  const notesp = document.getElementById("notesp");
   notesp.innerHTML = `
     <div id="mdArea"></div>
     <div id="mdEditor"></div>
   `;
+  */
 
   const addTaskDiv = document.createElement("div");
   addTaskDiv.innerHTML = `
@@ -523,4 +526,4 @@ async function removeAllWorkspaces() {
   workspaces.forEach(w => deleteWorkspace(w));
 }
 
-removeAllWorkspaces();
+// removeAllWorkspaces();
