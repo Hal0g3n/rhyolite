@@ -306,7 +306,6 @@ async function newNote(note) {
 
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
   await do_notes();
-  console.log(notes)
 }
 
 async function setNote(note, content) {
@@ -353,6 +352,7 @@ async function generate_workspaces() {
       closeOtherTabs();
       openSavedTabs((await getFromLocalStorage(workspace_name)).active_links);
       checkList = (await getFromLocalStorage(workspace_name)).tasks;
+      notes = (await getFromLocalStorage(workspace_name)).notes;
       await generate_everything();
     });
     workspaceBox.appendChild(workspace_item);
@@ -405,25 +405,24 @@ async function generate_tabs() {
       tab_container.addEventListener("click", function(event) {
         chrome.tabs.update(link.id, {selected: true});
       });
+
+      const delBtn = document.createElement("img")
+      delBtn.src = "./images/wrong.svg";
+      delBtn.addEventListener("click", (e) => {
+        console.log("Remove")
+        chrome.tabs.remove(link.id)
+        e.stopPropagation()
+        return false;
+      });
+      delBtn.style["height"] = "25px"
+      delBtn.style["aspect-ratio"] = '1';
+      delBtn.style["float"] = "right";
+      delBtn.style["z-index"] = "2";
+
+      tab_container.appendChild(delBtn);
+
       sus.appendChild(tab_container);
     });
-    
-    const delBtn = document.createElement("img")
-    delBtn.src = "./images/wrong.svg";
-    delBtn.addEventListener("click", (e) => {
-      console.log("Remove")
-      chrome.tabs.remove(link.id)
-      e.stopPropagation()
-      return false;
-    });
-    delBtn.style["height"] = "25px"
-    delBtn.style["aspect-ratio"] = '1';
-    delBtn.style["float"] = "right";
-    delBtn.style["z-index"] = "2";
-
-    tab_container.appendChild(delBtn);
-
-    tabsp.appendChild(tab_container);
   }
 
   const tabsearch = document.getElementById("tabsearch");
@@ -535,11 +534,14 @@ async function do_checklist() {
 do_checklist();
 
 async function do_notes() {
+  console.log(notes)
   if (currentWorkspace == null) return;
   
-  const notesp = document.getElementById("notesp");
-  notesp.textContent = "";
+  const notesp = document.createElement("div");
+  document.getElementById("notesp").textContent = "";
   notesp.style["display"] = "grid"
+
+  document.getElementById("notesp").appendChild(notesp)
   
   Object.keys(notes).forEach((note, i) => {
     const noteDiv = document.createElement("div");
