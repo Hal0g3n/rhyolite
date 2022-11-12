@@ -151,6 +151,8 @@ async function deleteWorkspace(name) {
   // Nothing to switch out, **L** bozo
   if (workspaces.length <= 0) currentWorkspace = null;
   else await switchWorkspace(workspaces[0]);
+
+  await generate_everything();
 }
 
 async function onTabCreated(tab) {
@@ -355,7 +357,7 @@ async function generate_everything() {
 
 // `try` to generate everything
 try {
-  generate_everything();
+  await generate_everything();
 } catch (e) {
   console.error(e);
 }
