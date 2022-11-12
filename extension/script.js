@@ -152,7 +152,7 @@ async function deleteWorkspace(name) {
 
   active_links = [];
   checkList = {};
-  notes = {}
+  notes = {};
 
   // Switch out if necessary
   if (currentWorkspace != name) return;
