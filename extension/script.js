@@ -91,7 +91,7 @@ async function createWorkspace(name) {
     [`${name}`]: {
       active_links: active_links,
       stored_tabs: {},
-      tasks: []
+      tasks: {}
     }
   });
 
@@ -110,6 +110,8 @@ async function switchWorkspace(next) {
   }
   if (!workspaces.includes(next)) return;
   
+  currentWorkspace = next;
+  
   // remove all unrelated tabs
   await closeOtherTabs();
 
@@ -120,11 +122,12 @@ async function switchWorkspace(next) {
   active_links = a.active_links;
   // set the checklist
   checkList = a.tasks;
-  
+
   // get active links to open
   openSavedTabs(active_links);
-  do_checklist();
-  currentWorkspace = next;
+  await generate_everything();
+
+  console.log(a, active_links, checkList);
 }
 
 async function deleteWorkspace(name) {
@@ -245,8 +248,9 @@ async function newTask(task) {
   let workspace = await getFromLocalStorage(currentWorkspace);
   
   workspace.tasks = checkList;
+  console.log(workspace);
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
-  console.log(currentWorkspace, workspace);
+  await do_checklist();
 }
 
 async function setTask(task, checked) {
@@ -258,6 +262,7 @@ async function setTask(task, checked) {
 
   workspace.tasks = checkList;
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  await do_checklist();
 }
 
 async function removeTask(task) {
@@ -269,6 +274,7 @@ async function removeTask(task) {
 
   workspace.tasks = checkList;
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  await do_checklist();
 }
 
 const workspaceBox = document.getElementById("yaw");
@@ -290,6 +296,7 @@ async function generate_workspaces() {
       currentWorkspace = workspace_name;
       closeOtherTabs();
       openSavedTabs((await getFromLocalStorage(workspace_name)).active_links);
+      checkList = (await getFromLocalStorage(workspace_name)).tasks;
       await generate_everything();
     });
     workspaceBox.appendChild(workspace_item);
@@ -344,6 +351,7 @@ async function generate_tabs() {
 async function generate_everything() {
   await generate_workspaces();
   await generate_tabs();
+  await do_checklist();
 }
 
 // `try` to generate everything
@@ -378,7 +386,14 @@ function do_tabpane() {
 }
 do_tabpane();
 
-function do_checklist() {
+async function do_checklist() {
+  if (currentWorkspace == null) return;
+  /*
+  const a = await getFromLocalStorage(currentWorkspace);
+  checkList = a.tasks;
+  console.log(a);
+  */
+
   const tasksp = document.getElementById("tasksp");
   tasksp.textContent = "";
 
@@ -472,7 +487,6 @@ function do_storagelistener() {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (key === "workspaces") {
         generate_workspaces();
-        console.log("WORKSPACES");
       } else if (key === currentWorkspace) {
         generate_tabs();
         do_checklist();
@@ -495,9 +509,15 @@ async function test() {
 test();
 */
 
+async function test2() {
+  await setToLocalStorage({_amogus: { tasks: { amogus: true }}});
+  console.log(await getFromLocalStorage("_amogus"))
+}
+test2();
+
 async function removeAllWorkspaces() {
   const workspaces = await getFromLocalStorage("workspaces");
   workspaces.forEach(w => deleteWorkspace(w));
 }
 
-// removeAllWorkspaces();
+removeAllWorkspaces();
