@@ -369,36 +369,57 @@ async function generate_tabs() {
   }
   
   const tabsp = document.getElementById("tabsp");
-  tabsp.textContent = ``;
+  tabsp.innerHTML = `
+    <input id="tabsearch" type="text" placeholder="search" style="width: calc(100% - 16px);">
+    <div id="sus"></div>
+  `;
 
-  links.forEach((link) => {
-    const tab_container = document.createElement("div");
-    const tab_pane_img = document.createElement("img");
-    const tab_div = document.createElement("div");
-    tab_pane_img.classList.add("tabPaneImg");
-    try {
-      const { origin } = new URL(link.url);
-      tab_pane_img.src = `${origin}/favicon.ico`;
-    } catch (e) {
-      tab_pane_img.src = `assets/chrome.png`;
+  const sus = document.getElementById("sus");
+  
+  function work(L) {
+    sus.textContent = "";
+    L.forEach((link) => {
+      if (link.obj != null) link = link.obj;
+      const tab_container = document.createElement("div");
+      const tab_pane_img = document.createElement("img");
+      const tab_div = document.createElement("div");
+      tab_pane_img.classList.add("tabPaneImg");
+      try {
+        const { origin } = new URL(link.url);
+        tab_pane_img.src = `${origin}/favicon.ico`;
+      } catch (e) {
+        tab_pane_img.src = `assets/chrome.png`;
+      }
+      tab_pane_img.addEventListener("error", function(event) {
+        tab_pane_img.src = "assets/chrome.png";
+      });
+      tab_container.appendChild(tab_pane_img);
+      tab_div.classList.add("tabDiv");
+      tab_div.innerHTML = `
+        <p class="tabTitle">${link.name}</p>
+        <p class="tabLink">${link.url}</p>
+      `;
+      tab_container.appendChild(tab_div);
+      tab_container.className = "tabContainer";
+      tab_container.style.cursor = "pointer";
+      tab_container.addEventListener("click", function(event) {
+        chrome.tabs.update(link.id, {selected: true});
+      });
+      sus.appendChild(tab_container);
+    });
+  }
+
+  const tabsearch = document.getElementById("tabsearch");
+  tabsearch.addEventListener("input", function(event) {
+    const val = tabsearch.value;
+    if (val.length <= 0.00000000000000000000000000000000000000000000000000000000000000000000000000001) {
+      work(links);
+      return;
     }
-    tab_pane_img.addEventListener("error", function(event) {
-      tab_pane_img.src = "assets/chrome.png";
-    });
-    tab_container.appendChild(tab_pane_img);
-    tab_div.classList.add("tabDiv");
-    tab_div.innerHTML = `
-      <p class="tabTitle">${link.name}</p>
-      <p class="tabLink">${link.url}</p>
-    `;
-    tab_container.appendChild(tab_div);
-    tab_container.className = "tabContainer";
-    tab_container.style.cursor = "pointer";
-    tab_container.addEventListener("click", function(event) {
-      chrome.tabs.update(link.id, {selected: true});
-    });
-    tabsp.appendChild(tab_container);
+    work(fuzzysort.go(val, links, { key: "name", }));
   });
+
+  work(links);
 
 }
 
