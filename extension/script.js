@@ -535,12 +535,12 @@ async function do_checklist() {
 do_checklist();
 
 async function do_notes() {
-  console.log(notes)
   if (currentWorkspace == null) return;
   
   const notesp = document.createElement("div");
   document.getElementById("notesp").textContent = "";
   notesp.style["display"] = "grid"
+  notesp.style["grid-template-cols"] = "repeat(2, 50%)"
 
   document.getElementById("notesp").appendChild(notesp)
   
