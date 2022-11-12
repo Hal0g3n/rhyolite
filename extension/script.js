@@ -5,6 +5,14 @@ function jumpToHome() {
   });
 }
 
+function limitchars(string, limit = 30) {
+  if (string.length <= limit) {
+    return string;
+  } else {
+    return string.substring(0, limit) + "...";
+  }
+}
+
 async function closeOtherTabs() {
   await chrome.tabs.query(
     { 'active': false, 'windowId': chrome.windows.WINDOW_ID_CURRENT },
@@ -337,7 +345,7 @@ async function generate_tabs() {
     tab_div.classList.add("tabDiv");
     tab_div.innerHTML = `
       <p class="tabTitle">${link.name}</p>
-      <p class="tabLink">${link.url}</p>
+      <p class="tabLink">${limitchars(link.url, 100)}</p>
     `;
     tab_container.appendChild(tab_div);
     tab_container.className = "tabContainer";

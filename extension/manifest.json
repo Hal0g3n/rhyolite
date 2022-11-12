@@ -11,17 +11,17 @@
       "default_popup": "popup.html",
       "default_title": "Rhyolite",
       "default_icon": {
-         "16": "/images/icon.png",
-         "32": "/images/icon.png",
-         "48": "/images/icon.png",
-         "128": "/images/icon.png"
+         "16": "/images/rhyolite.png",
+         "32": "/images/rhyolite.png",
+         "48": "/images/rhyolite.png",
+         "128": "/images/rhyolite.png"
       }
    },
    "icons": {
-     "16": "/images/icon.png",
-     "32": "/images/icon.png",
-     "48": "/images/icon.png",
-     "128": "/images/icon.png"
+     "16": "/images/rhyolite.png",
+     "32": "/images/rhyolite.png",
+     "48": "/images/rhyolite.png",
+     "128": "/images/rhyolite.png"
    },
    "commands": {
       "Jump to Home": {
