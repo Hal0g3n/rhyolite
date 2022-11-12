@@ -410,8 +410,8 @@ async function do_checklist() {
 
   Object.keys(checkList).forEach((task, i) => {
     const tabDiv = document.createElement("div");
-    tabDiv.className = "toggle"
-    tabDiv.style["margin"] = "10px"
+    tabDiv.className = "toggle";
+    tabDiv.style["margin"] = "10px";
 
     tabDiv.innerHTML = `
       <input type="checkbox" class="toggle__input" name="c${i}" ${checkList[task] ? "checked" : ""}/>
@@ -423,7 +423,7 @@ async function do_checklist() {
     tabDiv.firstElementChild.addEventListener("change", () => setTask(task, tabDiv.firstElementChild.checked));
 
     const delBtn = document.createElement("img");
-    delBtn.src = "./images/icons8-trash-can.svg"
+    delBtn.src = "./images/icons8-trash-can.svg";
     delBtn.style["height"] = "30px";
     delBtn.style["margin-left"] = "auto";
     delBtn.addEventListener("click", () => removeTask(task));
@@ -452,9 +452,9 @@ async function do_checklist() {
   const addBtn = document.createElement("img")
   addBtn.src="./assets/plus-symbol-button.png"
   addBtn.class="iconDetails";
-  addBtn.style["aspect-ratio"] = 1
+  addBtn.style["aspect-ratio"] = 1;
   addBtn.style["margin"] = "16px 0";
-  addBtn.addEventListener("click", () => newTask(inp.value));
+  addBtn.addEventListener("click", (event) => newTask(inp.value));
   
   const addTaskDiv = document.createElement("div");
   addTaskDiv.style["display"] = 'flex';
@@ -463,14 +463,14 @@ async function do_checklist() {
   tasksp.append(addTaskDiv);
 
   const t = document.getElementsByClassName("");
-  for (let i = 0; i < t.length; i++){
+  for (let i = 0; i < t.length; i++) {
     t[i].addEventListener('change', function() {
       if (this.checked) {
         // do stuff I am retarded (no)
       } else {
         
       }
-    })
+    });
   }
 }
 do_checklist();
@@ -536,9 +536,7 @@ do_storagelistener();
 async function test() {
   for (let i = 0; i < 100; i++) {
     await setToLocalStorage({_amogus: { amogus: "among us" + i }});
-    
   }
-  
 }
 test();
 */
@@ -547,7 +545,6 @@ test();
 // remnants of nth debugging session
 async function test2() {
   await setToLocalStorage({_amogus: { tasks: { amogus: true }}});
-  
 }
 test2();
 */
