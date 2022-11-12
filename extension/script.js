@@ -53,7 +53,17 @@ function getFromLocalStorage(key) {
 
 function setToLocalStorage(values) {
   return new Promise(resolve => {
-    chrome.storage.local.set(values, function () {
+    chrome.storage.local.set(values, function() {
+      if (chrome.runtime.lastError)
+        alert(`Error saving to browser storage:\n${chrome.runtime.lastError.message}`);
+      resolve();
+    });
+  });
+}
+
+function deleteFromLocalStorage(key) {
+  return new Promise(resolve => {
+    chrome.storage.local.remove(key, function() {
       if (chrome.runtime.lastError)
         alert(`Error saving to browser storage:\n${chrome.runtime.lastError.message}`);
       resolve();
@@ -63,6 +73,11 @@ function setToLocalStorage(values) {
 
 let currentWorkspace = null;
 let workspaces = null;
+
+let active_links = ((await chrome.tabs.query({})).map(
+  e => ({ id: e.id, name: e.title, url: e.url, /*icon: e.favIconUrl*/ })
+));
+active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
 
 async function createWorkspace(name) {
   if (workspaces == null) workspaces = await getFromLocalStorage("workspaces");
@@ -76,7 +91,7 @@ async function createWorkspace(name) {
     [`${name}`]: {
       active_links: active_links,
       stored_tabs: {},
-      tasks: []
+      tasks: {}
     }
   });
 
@@ -95,19 +110,24 @@ async function switchWorkspace(next) {
   }
   if (!workspaces.includes(next)) return;
   
-  // Remove all unrelated tabs
+  currentWorkspace = next;
+  
+  // remove all unrelated tabs
   await closeOtherTabs();
 
-  // Set active links to open
+  // get the next workspace
   const a = (await getFromLocalStorage(next));
-  active_links = a.active_links;
 
-  // Set checklist
+  // set active links
+  active_links = a.active_links;
+  // set the checklist
   checkList = a.tasks;
-  
-  // Get active links to open
+
+  // get active links to open
   openSavedTabs(active_links);
-  currentWorkspace = next;
+  await generate_everything();
+
+  console.log(a, active_links, checkList);
 }
 
 async function deleteWorkspace(name) {
@@ -120,9 +140,10 @@ async function deleteWorkspace(name) {
   // remove from array and update storage
   workspaces = workspaces.filter(e => e != name);
   await setToLocalStorage({ workspaces: workspaces });
-  chrome.storage.local.remove(name);
+  await deleteFromLocalStorage(name);
 
   active_links = [];
+  checkList = [];
 
   // Switch out if necessary
   if (currentWorkspace != name) return;
@@ -131,13 +152,6 @@ async function deleteWorkspace(name) {
   if (workspaces.length <= 0) currentWorkspace = null;
   else await switchWorkspace(workspaces[0]);
 }
-
-
-/** <Links Page> **/
-let active_links = ((await chrome.tabs.query({})).map(
-  e => ({ id: e.id, name: e.title, url: e.url, /*icon: e.favIconUrl*/ })
-));
-active_links = active_links.filter(e => !e.url.includes(chrome.runtime.id) && !e.url.includes("chrome-extension"));
 
 async function onTabCreated(tab) {
   if (tab == null || tab.url == null) return;
@@ -223,33 +237,44 @@ try {
   console.error(e);
 }
 
+
 /** <Tasks Page> **/
-let checkList = [];
-async function newTask(event) {
-  if (event.key != "Enter") return;
+let checkList = {};
+async function newTask(task) {
+  checkList[task] = false;
   
+  // Update workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
   
-  let task = event.value;
-  workspace.tasks.push({task: task, checked: false});
-  setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  workspace.tasks = checkList;
+  console.log(workspace);
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  await do_checklist();
 }
 
 async function setTask(task, checked) {
+  checkList[task] = checked;
+
+  // Update workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
 
-  workspace.tasks[task] = checked;
-  await setToLocalStorage({[`${currentWorkspace}`]: workspace})
+  workspace.tasks = checkList;
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  await do_checklist();
 }
 
 async function removeTask(task) {
+  delete checkList[task];
+
+  // Update workspace as necessary
   if (currentWorkspace == null) return;
   let workspace = await getFromLocalStorage(currentWorkspace);
 
-  delete workspace.tasks[task];
-  await setToLocalStorage({ [`${currentWorkspace}`]: workspace })
+  workspace.tasks = checkList;
+  await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
+  await do_checklist();
 }
 
 const workspaceBox = document.getElementById("yaw");
@@ -271,6 +296,7 @@ async function generate_workspaces() {
       currentWorkspace = workspace_name;
       closeOtherTabs();
       openSavedTabs((await getFromLocalStorage(workspace_name)).active_links);
+      checkList = (await getFromLocalStorage(workspace_name)).tasks;
       await generate_everything();
     });
     workspaceBox.appendChild(workspace_item);
@@ -288,7 +314,6 @@ async function generate_tabs() {
   }
   */
   const tabsp = document.getElementById("tabsp");
-  const notesp = document.getElementById("notesp");
   tabsp.textContent = ``;
 
   links.forEach((link) => {
@@ -296,8 +321,12 @@ async function generate_tabs() {
     const tab_pane_img = document.createElement("img");
     const tab_div = document.createElement("div");
     tab_pane_img.classList.add("tabPaneImg");
-    const { origin } = new URL(link.url);
-    tab_pane_img.src = `${origin}/favicon.ico`;
+    try {
+      const { origin } = new URL(link.url);
+      tab_pane_img.src = `${origin}/favicon.ico`;
+    } catch (e) {
+      tab_pane_img.src = `assets/chrome.png`;
+    }
     tab_pane_img.addEventListener("error", function(event) {
       tab_pane_img.src = "assets/chrome.png";
     });
@@ -321,6 +350,7 @@ async function generate_tabs() {
 async function generate_everything() {
   await generate_workspaces();
   await generate_tabs();
+  await do_checklist();
 }
 
 // `try` to generate everything
@@ -355,27 +385,54 @@ function do_tabpane() {
 }
 do_tabpane();
 
-function do_checklist() {
-  const tasksp = document.getElementById("tasksp");
+async function do_checklist() {
+  if (currentWorkspace == null) return;
+  /*
+  const a = await getFromLocalStorage(currentWorkspace);
+  checkList = a.tasks;
+  console.log(a);
+  */
 
-  for (const task of checkList) {
+  const tasksp = document.getElementById("tasksp");
+  tasksp.textContent = "";
+
+  Object.keys(checkList).forEach((task, i) => {
     const tabDiv = document.createElement("div");
+    tabDiv.className = "toggle"
+    tabDiv.style["margin"] = "10px"
+
     tabDiv.innerHTML = `
-      <i type="checkbox" class="checkbox1" name="c${i}" checked="${task.checked}">
-      <input type="text" class="addTask" onkeydown="newTask(this)"/>
-    `; 
+      <input type="checkbox" class="toggle__input" name="c${i}" checked="${checkList[task]}" onclick="setTask(${task}, this)"/>
+      <label class="toggle__label" for="c${i}"><span class="toggle__text">${task}</span></label><br>
+    `;
+
     tasksp.appendChild(tabDiv);
-  }
+  });
   
-  notesp.innerHTML = `<div id="mdArea"></div>
-  <div id="mdEditor"></div>
-  `
+  /*
+  // what is this
+  const notesp = document.getElementById("notesp");
+  notesp.innerHTML = `
+    <div id="mdArea"></div>
+    <div id="mdEditor"></div>
+  `;
+  */
 
   const addTaskDiv = document.createElement("div");
   addTaskDiv.innerHTML = `
-      <i class="material-icons">add</i>
-      <input class="addTask"></input>
-    `;
+    <img src="./assets/plus-symbol-button.png" class="iconDetails" style="width: 16px; height: auto; margin: 16px 0;">
+  `;
+
+  const inp = document.createElement("input");
+  inp.className = "addTask";
+  inp.addEventListener("keyup", event => {
+    if (event.code !== "Enter") return;
+    newTask(inp.value);
+    event.preventDefault();
+  });
+  
+  addTaskDiv.appendChild(inp);
+  tasksp.append(addTaskDiv);
 
   const t = document.getElementsByClassName("");
   for (let i = 0; i < t.length; i++){
@@ -438,6 +495,7 @@ function do_storagelistener() {
         generate_workspaces();
       } else if (key === currentWorkspace) {
         generate_tabs();
+        do_checklist();
       }
     }
   });
@@ -457,9 +515,18 @@ async function test() {
 test();
 */
 
+/*
+// remnants of nth debugging session
+async function test2() {
+  await setToLocalStorage({_amogus: { tasks: { amogus: true }}});
+  console.log(await getFromLocalStorage("_amogus"))
+}
+test2();
+*/
+
 async function removeAllWorkspaces() {
   const workspaces = await getFromLocalStorage("workspaces");
   workspaces.forEach(w => deleteWorkspace(w));
 }
 
-removeAllWorkspaces();
+// removeAllWorkspaces();

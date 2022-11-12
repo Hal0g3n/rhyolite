@@ -19,6 +19,7 @@ chrome.commands.onCommand.addListener(function (command) {
 
 // when a new window is created, create tab to go with it
 chrome.windows.onCreated.addListener((window) => {
+    console.log(window)
     createPinnedTab(window.id);
 });
 
