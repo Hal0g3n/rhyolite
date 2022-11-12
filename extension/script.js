@@ -307,14 +307,14 @@ async function generate_workspaces() {
 
 async function generate_tabs() {
   let links = active_links;
-  /*
+  
   if (currentWorkspace != null) {
     const a = await getFromLocalStorage(currentWorkspace);
     if (a != null) {
       links = a.active_links;
     }
   }
-  */
+  
   const tabsp = document.getElementById("tabsp");
   tabsp.textContent = ``;
 
