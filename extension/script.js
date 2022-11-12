@@ -361,14 +361,13 @@ async function generate_workspaces() {
 
 async function generate_tabs() {
   let links = active_links;
-  
   if (currentWorkspace != null) {
     const a = await getFromLocalStorage(currentWorkspace);
     if (a != null) {
       links = a.active_links;
     }
   }
-  
+  console.log(active_links);
   const tabsp = document.getElementById("tabsp");
   tabsp.innerHTML = `
     <input id="tabsearch" type="text" placeholder="search" style="width: calc(100% - 16px);">
@@ -634,6 +633,7 @@ function do_storagelistener() {
       if (key === "workspaces") {
         generate_workspaces();
       } else if (key === currentWorkspace) {
+        console.log("update");
         generate_tabs();
         do_checklist();
       }
