@@ -182,7 +182,7 @@ body {
   left: 6px;
   margin-top: 0px;
   padding: none;
-  width: calc(100% - 250px);
+  width: 250px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
