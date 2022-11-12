@@ -296,7 +296,7 @@ async function removeTask(task) {
 let notes = {}
 async function newNote(note) {
   if (!note.replace(/\s/g, '').length) return;
-  checkList[note] = "";
+  notes[note] = "";
 
   // Update workspace as necessary
   if (currentWorkspace == null) return;
@@ -306,6 +306,7 @@ async function newNote(note) {
 
   await setToLocalStorage({ [`${currentWorkspace}`]: workspace });
   await do_notes();
+  console.log(notes)
 }
 
 async function setNote(note, content) {
@@ -370,7 +371,7 @@ async function generate_tabs() {
   
   const tabsp = document.getElementById("tabsp");
   tabsp.textContent = ``;
-
+  
   links.forEach((link) => {
     const tab_container = document.createElement("div");
     const tab_pane_img = document.createElement("img");
@@ -388,13 +389,13 @@ async function generate_tabs() {
     tab_container.appendChild(tab_pane_img);
     tab_div.classList.add("tabDiv");
     tab_div.innerHTML = `
-      <p class="tabTitle">${link.name}</p>
+    <p class="tabTitle">${link.name}</p>
       <p class="tabLink">${link.url}</p>
-    `;
-    tab_container.appendChild(tab_div);
-    tab_container.className = "tabContainer";
-    tab_container.style.cursor = "pointer";
-    tab_container.addEventListener("click", function(event) {
+      `;
+      tab_container.appendChild(tab_div);
+      tab_container.className = "tabContainer";
+      tab_container.style.cursor = "pointer";
+      tab_container.addEventListener("click", function(event) {
       chrome.tabs.update(link.id, {selected: true});
     });
     tabsp.appendChild(tab_container);
@@ -406,6 +407,7 @@ async function generate_everything() {
   await generate_workspaces();
   await generate_tabs();
   await do_checklist();
+  await do_notes();
 }
 
 // `try` to generate everything
@@ -416,7 +418,7 @@ try {
 }
 
 function do_tabpane() {
-
+  
   function openTab(evt, tab) {
     let tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -436,7 +438,7 @@ function do_tabpane() {
       openTab(event, tab.getAttribute("open_id"));
     });
   });
-
+  
 }
 do_tabpane();
 
@@ -461,8 +463,6 @@ async function do_checklist() {
       <label class="toggle__label" for="c${i}"><span class="toggle__text">${task}</span></label><br>
     `;
 
-    
-
     tabDiv.firstElementChild.addEventListener("change", () => setTask(task, tabDiv.firstElementChild.checked));
 
     const delBtn = document.createElement("img");
@@ -473,24 +473,10 @@ async function do_checklist() {
     tabDiv.appendChild(delBtn);
     tasksp.appendChild(tabDiv);
   });
-
-  function do_notes() {
-
-  }
-  
-  /*
-  // what is this
-  const notesp = document.getElementById("notesp");
-  notesp.innerHTML = `
-    <div id="mdArea"></div>
-    <div id="mdEditor"></div>
-  `;
-  */
-
  
- const inp = document.createElement("input");
- inp.className = "addTask";
- inp.addEventListener("keyup", event => {
+  const inp = document.createElement("input");
+  inp.className = "addTask";
+  inp.addEventListener("keyup", event => {
     if (event.code !== "Enter") return;
     newTask(inp.value);
     event.preventDefault();
@@ -508,19 +494,76 @@ async function do_checklist() {
   addTaskDiv.appendChild(inp);
   addTaskDiv.appendChild(addBtn);
   tasksp.append(addTaskDiv);
-
-  const t = document.getElementsByClassName("");
-  for (let i = 0; i < t.length; i++) {
-    t[i].addEventListener('change', function() {
-      if (this.checked) {
-        // do stuff I am retarded (no)
-      } else {
-        
-      }
-    });
-  }
 }
 do_checklist();
+
+async function do_notes() {
+  if (currentWorkspace == null) return;
+  
+  const notesp = document.getElementById("notesp");
+  notesp.textContent = "";
+  notesp.style["display"] = "grid"
+  
+  Object.keys(notes).forEach((note, i) => {
+    const noteDiv = document.createElement("div");
+    noteDiv.className = "tabContainer";
+    noteDiv.style["margin"] = "10px";
+
+    const title = document.createElement("h2")
+    title.innerHTML = `<input value = ${note}/>`
+    noteDiv.appendChild(title);
+    
+    const content = document.createElement("textarea")
+    content.value = notes[note];
+    content.addEventListener("keyup", event => {
+      // Ctrl + Enter shortcut
+      if ((event.key != "Enter") || !event.ctrlKey) return;
+
+      setNote(note, content.value);
+      event.preventDefault();
+    });
+    noteDiv.appendChild(content);
+
+    const savBtn = document.createElement("img")
+    savBtn.src = "./images/icons8-trash-can.svg";
+    savBtn.style["height"] = "30px";
+    savBtn.style["margin-left"] = "auto";
+    savBtn.addEventListener("click", () => setNote(note, content.value));
+    noteDiv.appendChild(savBtn);
+
+    const delBtn = document.createElement("img");
+    delBtn.src = "./images/icons8-trash-can.svg";
+    delBtn.style["height"] = "30px";
+    delBtn.style["margin-left"] = "auto";
+    delBtn.addEventListener("click", () => removeNote(note));
+    noteDiv.appendChild(delBtn);
+    notesp.appendChild(noteDiv);
+  });
+
+  const inp = document.createElement("input");
+  inp.className = "addNote";
+  inp.addEventListener("keyup", event => {
+    if (event.code !== "Enter") return;
+    newNote(inp.value);
+    event.preventDefault();
+  });
+
+  const addBtn = document.createElement("img")
+  addBtn.src = "./assets/plus-symbol-button.png"
+  addBtn.class = "iconDetails";
+  addBtn.style["aspect-ratio"] = 1;
+  addBtn.style["margin"] = "16px 0";
+  addBtn.addEventListener("click", () => newNote(inp.value));
+
+  const addNoteDiv = document.createElement("div");
+  addNoteDiv.style["display"] = 'flex';
+  addNoteDiv.appendChild(inp);
+  addNoteDiv.appendChild(addBtn);
+  notesp.append(addNoteDiv);
+
+  console.log(notesp);
+}
+do_notes();
 
 function do_addnew() {
   const addnew = document.getElementById("addnew");
