@@ -151,6 +151,8 @@ async function deleteWorkspace(name) {
   // Nothing to switch out, **L** bozo
   if (workspaces.length <= 0) currentWorkspace = null;
   else await switchWorkspace(workspaces[0]);
+
+  await generate_everything();
 }
 
 async function onTabCreated(tab) {
@@ -356,7 +358,7 @@ async function generate_everything() {
 
 // `try` to generate everything
 try {
-  generate_everything();
+  await generate_everything();
 } catch (e) {
   console.error(e);
 }
@@ -520,11 +522,14 @@ async function test() {
 test();
 */
 
+/*
+// remnants of nth debugging session
 async function test2() {
   await setToLocalStorage({_amogus: { tasks: { amogus: true }}});
   console.log(await getFromLocalStorage("_amogus"))
 }
 test2();
+*/
 
 async function removeAllWorkspaces() {
   const workspaces = await getFromLocalStorage("workspaces");
