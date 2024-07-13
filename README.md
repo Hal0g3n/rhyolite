@@ -1,46 +1,70 @@
-# rhyolite
-----
+# Getting Started with Create React App
 
-----
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-----
+## Available Scripts
 
-----
+In the project directory, you can run:
 
-----
+### `npm start`
 
-⚠️ disclaimer ⚠️
-this extension was created for the power users
-```
-   AAAAA         MMMMMM MMMMMM        OOOOOOO     NNNNN    NNN     GGGGGGGG        UUU    UUU      SSSSSS
-  AAA AAA       MMM  MMMMM  MMM      OOO   OOO    NNNNNN   NNN    GGGG             UUU    UUU     SSS  SSS
- AAA   AAA     MMM    MMM    MMM    OOO     OOO   NNN NNN  NNN   GGG   GGGGGG      UUU    UUU    SSS
-AAAAAAAAAAA   MMM      M      MMM   OOO     OOO   NNN  NNN NNN   GGG  GG  GGG      UUU    UUU      SSSSSSS
-AAA     AAA   MMM             MMM    OOO   OOO    NNN   NNNNNN    GGG    GGG        UUU  UUU     SS     SSS
-AAA     AAA   MMM             MMM     OOOOOOO     NNN    NNNNN     GGGGGGGG          UUUUUU       SSSSSSSS
-```
-!!!
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-## Inspiration
-We looked at some of our friends' computers and having more than 40 tabs open at once, making the computer very laggy and making work inefficient, as navigation through the tabs is not nice.
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-## What it does
-Rhyolite groups tabs together and only keeps open one group at a time, managing the amount of total tabs you have on screen at any one time.
+### `npm test`
 
-## How we built it
-We used JavaScript, HTML and CSS to make a chromium browser extension.
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-## Challenges we ran into
-It was also a difficulty trying to stay up and completing the project in such a limited amount of time (overnight, 23½ hours)
-The way chromium extensions are coded makes it not very nice to store and update data, resulting in an undesirablly long chain of bugs.
+### `npm run build`
 
-## Accomplishments that we're proud of
-We delivered all of the features we wanted to put in our final product, and also added some extra features!
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-## What we learned
-We learnt how to develop browser extensions! We also realised the possibilities that browser extensions could increase productivity.
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-## What's next for Rhyolite
-A system to organize workspaces and pin certain workspaces at the top
-A way to customize the CSS for the extension to allow the use of other designs. (a bit done)
-Having a profile system for further organization of workspaces.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
